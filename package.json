@@ -1,0 +1,8 @@
+{
+  "author": "Frank Pobocek <frank@pobocek.com",
+  "licence": "MIT",
+  "private": false,
+  "workspaces": [
+    "packages/week-1"
+  ]
+}
