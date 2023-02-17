@@ -2,7 +2,6 @@
 
 First week project of solidity bootcamp, focusing on the interacton with "HelloWorld" contract, it's deployment, string and ownership mainpualtion.
 
-
 ## How to use
 
 ```shell
@@ -20,7 +19,6 @@ npx hardhat node
 // Deploy HelloWorld contract on your local node
 npx hardhat run scripts/deploy.ts
 ```
-
 
 ## Report
 
@@ -190,3 +188,4 @@ eth_estimateGas
       at async Server.JsonRpcHandler.handleHttp (/Users/frantisek/Documents/Projects/solidity-bootcamp/node_modules/hardhat/src/internal/hardhat-network/jsonrpc/handler.ts:52:21)
 
 eth_blockNumber (6)
+```
