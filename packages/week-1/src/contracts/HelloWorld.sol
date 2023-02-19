@@ -34,6 +34,10 @@ contract HelloWorld is IHelloWorld {
     require(msg.sender == owner, 'Caller is not the owner');
     _;
   }
+
+  fallback() external onlyOwner {
+    text = "Fallback method triggered";
+  }
 }
 
 contract SideHelloWorld {
@@ -49,6 +53,10 @@ contract SideHelloWorld {
 
   function callSetText(address _hello_world_address, string calldata newText) public onlyOwner {
     IHelloWorld(_hello_world_address).setText(newText);
+  }
+
+  function callNotImplementedFunction(address _hello_world_address) public onlyOwner {
+    _hello_world_address.call(abi.encodeWithSignature("NotImplementedFunction()"));
   }
 
   modifier onlyOwner() {

@@ -101,5 +101,25 @@ describe('Hello World contract', function () {
 
       expect(await helloWorld.helloWorld()).to.equal('Hi from team 8');
     });
+
+    it('Should transferOnwership to SideHelloWorld and make setText cross-contract call', async function () {
+      const { helloWorld, deployer } = await loadFixture(deployContract);
+      const { sideHelloWorld, sideDeployer } = await loadFixture(deploySideContract);
+
+      await helloWorld.connect(deployer).transferOwnership(sideHelloWorld.address);
+      await sideHelloWorld.connect(sideDeployer).callSetText(helloWorld.address, 'Hi from team 8');
+
+      expect(await helloWorld.helloWorld()).to.equal('Hi from team 8');
+    });
+
+    it('Should trigger fallback while making callNonexistent cross-contract call', async function () {
+      const { helloWorld, deployer } = await loadFixture(deployContract);
+      const { sideHelloWorld, sideDeployer } = await loadFixture(deploySideContract);
+
+      await helloWorld.connect(deployer).transferOwnership(sideHelloWorld.address);
+      await sideHelloWorld.connect(sideDeployer).callNotImplementedFunction(helloWorld.address);
+
+      expect(await helloWorld.helloWorld()).to.equal('Fallback method triggered');
+    });
   })
 });
