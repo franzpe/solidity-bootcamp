@@ -14,6 +14,17 @@ describe('Hello World contract', function () {
     return { helloWorld, deployer, otherAccount };
   }
 
+  async function deploySideContract() {
+    const [_, __, sideDeployer] = await ethers.getSigners();
+
+    const SideHelloWorldFactory = await ethers.getContractFactory('SideHelloWorld');
+    const sideHelloWorld = await SideHelloWorldFactory.connect(sideDeployer).deploy();
+
+    await sideHelloWorld.deployed();
+
+    return { sideHelloWorld, sideDeployer };
+  }
+
   describe('Deployment', async function () {
     it('Should deploy contract with the right owner', async function () {
       const { helloWorld, deployer } = await loadFixture(deployContract);
@@ -63,4 +74,32 @@ describe('Hello World contract', function () {
       );
     });
   });
+
+  describe('Cross-contract call (using interface from SideHelloWorld to HelloWorld)', async function () {
+    it('Should make a helloWorld cross-contract call and return text', async function () {
+      const { helloWorld, deployer } = await loadFixture(deployContract);
+      const { sideHelloWorld, sideDeployer } = await loadFixture(deploySideContract);
+
+      expect(await sideHelloWorld.callHelloWorld(helloWorld.address)).to.equal("Hello World");
+    });
+
+    it('Should transferOnwership to SideHelloWorld', async function () {
+      const { helloWorld, deployer } = await loadFixture(deployContract);
+      const { sideHelloWorld, sideDeployer } = await loadFixture(deploySideContract);
+
+      await helloWorld.connect(deployer).transferOwnership(sideHelloWorld.address);
+
+      expect(await helloWorld.owner()).to.equal(sideHelloWorld.address);
+    });
+
+    it('Should transferOnwership to SideHelloWorld and make setText cross-contract call', async function () {
+      const { helloWorld, deployer } = await loadFixture(deployContract);
+      const { sideHelloWorld, sideDeployer } = await loadFixture(deploySideContract);
+
+      await helloWorld.connect(deployer).transferOwnership(sideHelloWorld.address);
+      await sideHelloWorld.connect(sideDeployer).callSetText(helloWorld.address, 'Hi from team 8');
+
+      expect(await helloWorld.helloWorld()).to.equal('Hi from team 8');
+    });
+  })
 });

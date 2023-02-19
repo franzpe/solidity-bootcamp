@@ -35,3 +35,24 @@ contract HelloWorld is IHelloWorld {
     _;
   }
 }
+
+contract SideHelloWorld {
+  address public owner;
+
+  constructor(){
+    owner = msg.sender;
+  }
+
+  function callHelloWorld(address _hello_world_address) public view returns (string memory) {
+    return IHelloWorld(_hello_world_address).helloWorld();
+  }
+
+  function callSetText(address _hello_world_address, string calldata newText) public onlyOwner {
+    IHelloWorld(_hello_world_address).setText(newText);
+  }
+
+  modifier onlyOwner() {
+    require(msg.sender == owner, 'Caller is not the owner');
+    _;
+  }
+}
