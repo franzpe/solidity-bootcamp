@@ -3,6 +3,7 @@
   "licence": "MIT",
   "private": false,
   "workspaces": [
-    "packages/week-1"
+    "packages/week-1",
+    "packages/practice-0"
   ]
 }
