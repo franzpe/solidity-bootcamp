@@ -25,7 +25,7 @@ const deployTask = task(
     const provider = new hre.ethers.providers.InfuraProvider('goerli', process.env.INFURA_API_KEY);
 
     const privateKey = process.env.PRIVATE_KEY;
-    if (!privateKey || privateKey.length <= 0) throw new Error('Missing environment: Mnemonic seed');
+    if (!privateKey || privateKey.length <= 0) throw new Error('Missing environment: private key');
 
     const wallet = new hre.ethers.Wallet(privateKey);
     console.log(`Connected to the wallet address ${wallet.address}`);
