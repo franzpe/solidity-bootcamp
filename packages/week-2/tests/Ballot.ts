@@ -1,16 +1,10 @@
 import { expect } from 'chai';
+
 import { ethers } from 'hardhat';
 import { Ballot } from '../typechain-types';
+import { convertStringArrayToBytes32 } from '../utils/intdex';
 
 const PROPOSALS = ['Proposal 1', 'Proposal 2', 'Proposal 3'];
-
-function convertStringArrayToBytes32(array: string[]) {
-  const bytes32Array = [];
-  for (let index = 0; index < array.length; index++) {
-    bytes32Array.push(ethers.utils.formatBytes32String(array[index]));
-  }
-  return bytes32Array;
-}
 
 describe('Ballot', function () {
   let ballotContract: Ballot;

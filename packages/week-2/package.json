@@ -4,12 +4,14 @@
   "description": "You can use this as a good starting point for development",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "hardhat:deploy": "npx hardhat deploy proposal1 proposal2 proposal3"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
+    "dotenv": "^16.0.3",
     "hardhat": "^2.12.7"
   }
 }
