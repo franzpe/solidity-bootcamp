@@ -129,7 +129,7 @@ Cast vote for proposal num: 0
 reason: 'transaction failed',
 code: 'CALL_EXCEPTION',
 transactionHash: '0x55a58b8bad69f20e626d8bb907f1055becc962caf3b2ce7733fb0153cbce66fb',
-
+```
 {
   to: '0xe4D17421F3da44C1D94F2881da879407977f0242',
   from: '0xA59b230b8f43C888F554F6b9207462fb8b9B2dE7',
@@ -148,7 +148,7 @@ transactionHash: '0x55a58b8bad69f20e626d8bb907f1055becc962caf3b2ce7733fb0153cbce
   type: 2,
   byzantium: true
 }
-
+```
 
 ### Reverted transaction when address has no rights to vote
 
@@ -156,7 +156,7 @@ Fail with error 'Has no right to vote'
 reason: 'transaction failed',
 code: 'CALL_EXCEPTION',
 transactionHash: '0x1b09b82bf135a6d8bef68d049b07e2b7461ffd85d16584d3fb8f3cf704a495e7',
-
+```
 {
   to: '0xe4D17421F3da44C1D94F2881da879407977f0242',
   from: '0xA59b230b8f43C888F554F6b9207462fb8b9B2dE7',
@@ -175,6 +175,7 @@ transactionHash: '0x1b09b82bf135a6d8bef68d049b07e2b7461ffd85d16584d3fb8f3cf704a4
   type: 2,
   byzantium: true
 }
+```
 
 ### Reverted transaction when address has no rights to vote
 
@@ -183,6 +184,7 @@ reason: 'transaction failed',
 code: 'CALL_EXCEPTION',
 transactionHash: '0x044180ce8bb6fe69090d7c1aef4df22b15ff05ba02dc4839eb23ca62035a311b',
 
+```
 {
     to: '0xe4D17421F3da44C1D94F2881da879407977f0242',
     from: '0xA59b230b8f43C888F554F6b9207462fb8b9B2dE7',
@@ -201,3 +203,4 @@ transactionHash: '0x044180ce8bb6fe69090d7c1aef4df22b15ff05ba02dc4839eb23ca62035a
     type: 2,
     byzantium: true
   }
+```
