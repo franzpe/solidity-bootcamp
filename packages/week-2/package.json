@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "hardhat:deploy": "npx hardhat deploy proposal1 proposal2 proposal3",
-    "hardhat:give-right": "npx ts-node --files ./scripts/giveRightToVote.ts 0xe4D17421F3da44C1D94F2881da879407977f0242 0x4BaaD27a98D048295CC50509Fb99BC588926f368"
+    "hardhat:give-right": "npx ts-node --files ./scripts/giveRightToVote.ts 0xe4D17421F3da44C1D94F2881da879407977f0242 0x4BaaD27a98D048295CC50509Fb99BC588926f368",
+    "hardhat:vote": "npx ts-node --files ./scripts/castVote.ts 0xe4D17421F3da44C1D94F2881da879407977f0242 1"
   },
   "author": "",
   "license": "ISC",
