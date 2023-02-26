@@ -6,9 +6,9 @@ dotenv.config();
 const main = async () => {
   const args = process.argv;
 
-  const [ballotAddress, proposalNum] = args.slice(2);
+  const [ballotAddress, delegateAddress] = args.slice(2);
 
-  if (!ballotAddress || !proposalNum) throw new Error('Missing parameters: ballotAddress or proposal number');
+  if (!ballotAddress || !delegateAddress) throw new Error('Missing parameters: ballotAddress or delegate address');
 
   const provider = new ethers.providers.AlchemyProvider('goerli', process.env.ALCHEMY_API_KEY);
 
@@ -23,9 +23,9 @@ const main = async () => {
   const ballotContractFactory = new Ballot__factory(signer);
   const ballot = ballotContractFactory.attach(ballotAddress);
 
-  const txRecepit = await (await ballot.vote(proposalNum, { gasLimit: 500000 })).wait();
+  const txRecepit = await (await ballot.delegate(delegateAddress, { gasLimit: 500000 })).wait();
 
-  console.log(`Cast vote for proposal num: ${proposalNum}`);
+  console.log(`Delegated vote to: ${delegateAddress}`);
   console.log(txRecepit);
 };
 
