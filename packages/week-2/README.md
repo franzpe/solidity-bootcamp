@@ -2,7 +2,7 @@
 
 [Ballot - solidity by example](https://docs.soliditylang.org/en/v0.8.19/solidity-by-example.html)
 
-##Report:
+## Report:
 
 Contract was deployed on goerli testnet and it's address is **0xe4D17421F3da44C1D94F2881da879407977f0242**
 
