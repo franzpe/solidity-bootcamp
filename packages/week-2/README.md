@@ -164,10 +164,11 @@ Cast vote for proposal num: 1
 }
 ```
 
-### Delegate vote 
+### Delegate vote
 
 Connected to the wallet address **0xA59b230b8f43C888F554F6b9207462fb8b9B2dE7**
 Delegated vote to: **0x9b9538508B849476A9a3E82f15d3020D68d928b2**
+
 ```
 {
   to: '0xe4D17421F3da44C1D94F2881da879407977f0242',
@@ -216,7 +217,6 @@ Cast vote for proposal num: 0
   events: []
 }
 ```
-
 
 ### Reverted transaction for giveRights to vote when address != chairperson
 
@@ -296,4 +296,12 @@ transactionHash: '0x044180ce8bb6fe69090d7c1aef4df22b15ff05ba02dc4839eb23ca62035a
     type: 2,
     byzantium: true
   }
+```
+
+### Result
+
+Winning proposal
+
+```
+The winner is: proposal1 (string), 0x70726f706f73616c310000000000000000000000000000000000000000000000 (bytes)
 ```
