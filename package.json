@@ -4,6 +4,8 @@
   "private": false,
   "workspaces": [
     "packages/week-1",
-    "packages/practice-0"
+    "packages/week-2",
+    "packages/practice-0",
+    "packages/lesson-9"
   ]
 }
