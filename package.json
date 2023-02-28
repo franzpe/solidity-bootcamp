@@ -3,9 +3,9 @@
   "licence": "MIT",
   "private": false,
   "workspaces": [
+    "packages/_template",
     "packages/week-1",
     "packages/week-2",
-    "packages/practice-0",
     "packages/lesson-9"
   ]
 }
