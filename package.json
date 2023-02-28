@@ -4,8 +4,9 @@
   "private": false,
   "workspaces": [
     "packages/_template",
+    "packages/lesson-7-8-ballot",
+    "packages/lesson-9",
     "packages/week-1",
-    "packages/week-2",
-    "packages/lesson-9"
+    "packages/week-2"
   ]
 }
