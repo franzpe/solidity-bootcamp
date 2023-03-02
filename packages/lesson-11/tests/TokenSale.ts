@@ -162,14 +162,6 @@ describe('NFT Shop', async () => {
         expect(withdrawableAmount).to.eq(TEST_TOKEN_PRICE.div(2));
       });
 
-      it('update the public pool account correctly', async () => {
-        throw new Error('Not implemented');
-      });
-
-      it('favors the public pool with the rounding', async () => {
-        throw new Error('Not implemented');
-      });
-
       describe('When a user burns their NFT at the Shop contract', async () => {
         let tokenBalanceBeforeBurnNft: BigNumber;
 
@@ -187,20 +179,30 @@ describe('NFT Shop', async () => {
           expect(tokenBalanceAfterBurnNft).to.eq(tokenBalanceBeforeBurnNft.add(TEST_TOKEN_PRICE.div(2)));
         });
 
-        it('updates the public pool correctly', async () => {
-          throw new Error('Not implemented');
+        describe('When the owner withdraw from the Shop contract', async () => {
+          let withdrawableAmount: BigNumber;
+          let balanceBeforeWithdrawal: BigNumber;
+
+          beforeEach(async () => {
+            withdrawableAmount = await tokenSaleContract.withdrawableAmount();
+            balanceBeforeWithdrawal = await tokenContract.balanceOf(deployer.address);
+
+            const withdrawTx = await tokenSaleContract.withdraw(withdrawableAmount);
+            await withdrawTx.wait();
+          });
+
+          it('recovers the right amount of ERC20 tokens', async () => {
+            const balanceAfterWithdrawal = await tokenContract.balanceOf(deployer.address);
+            const diff = balanceAfterWithdrawal.sub(balanceBeforeWithdrawal);
+            expect(diff).to.eq(TEST_TOKEN_PRICE.div(2));
+          });
+
+          it('updates the owner pool account correctly', async () => {
+            const withdrawableAmountAfterWithdrawal = await tokenSaleContract.withdrawableAmount();
+            expect(withdrawableAmountAfterWithdrawal).to.eq(withdrawableAmount.sub(TEST_TOKEN_PRICE.div(2)));
+          });
         });
       });
-    });
-  });
-
-  describe('When the owner withdraw from the Shop contract', async () => {
-    it('recovers the right amount of ERC20 tokens', async () => {
-      throw new Error('Not implemented');
-    });
-
-    it('updates the owner pool account correctly', async () => {
-      throw new Error('Not implemented');
     });
   });
 });
