@@ -13,8 +13,8 @@ interface IMyToken is IERC20 {
 interface IMyNFT {
   function safeMint(address to, uint256 tokenId) external;
 
-  // TokenID can only be owned by one account
-  function burnFrom(uint256 tokenId) external;
+  // Every NFT can have just one owner
+  function burn(uint256 tokenId) external;
 }
 
 contract TokenSale is Ownable {
@@ -58,8 +58,8 @@ contract TokenSale is Ownable {
   }
 
   function burnNFT(uint256 tokenId) external {
-    nftAddress.burnFrom(tokenId);
-    tokenAddress.transfer(msg.sender, price / 2);
+    nftAddress.burn(tokenId);
+    tokenAddress.transfer(msg.sender, price - (price / 2));
   }
 
   function withdraw(uint256 amount) external onlyOwner {

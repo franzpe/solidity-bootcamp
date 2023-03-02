@@ -48,8 +48,8 @@ describe('NFT Shop', async () => {
     const giveTokenMintRoleTx = await tokenContract.grantRole(minterRole, tokenSaleContract.address);
     await giveTokenMintRoleTx.wait();
 
-    // Give mint nft role
-    const giveNftTokenMintRoleTx = await tokenContract.grantRole(minterRole, tokenSaleContract.address);
+    // Give minter role of nft to token sale contract
+    const giveNftTokenMintRoleTx = await nftContract.grantRole(minterRole, tokenSaleContract.address);
     await giveNftTokenMintRoleTx.wait();
   });
 
@@ -99,12 +99,14 @@ describe('NFT Shop', async () => {
 
     describe('When a user burns an ERC20 at the Shop contract', async () => {
       let tokenBalanceBeforeBurn: BigNumber;
+      let ethBalanceBeforeBurn: BigNumber;
       let burnAmount: BigNumber;
       let allowTxGasCost: BigNumber;
       let burnTxGasCost: BigNumber;
 
       beforeEach(async () => {
         tokenBalanceBeforeBurn = await tokenContract.balanceOf(account1.address);
+        ethBalanceBeforeBurn = await account1.getBalance();
         burnAmount = tokenBalanceBeforeBurn.div(2);
 
         const allowTx = await tokenContract.connect(account1).approve(tokenSaleContract.address, burnAmount);
@@ -118,15 +120,16 @@ describe('NFT Shop', async () => {
 
       it('gives the correct amount of ETH', async () => {
         const ethBalanceAfterBurn = await account1.getBalance();
-
-        // TODO
+        const expected = burnAmount.sub(burnTxGasCost).sub(allowTxGasCost);
+        const diff = ethBalanceAfterBurn.sub(ethBalanceBeforeBurn);
+        const error = diff.sub(expected);
+        expect(error).to.eq(0);
       });
 
       it('burns the correct amount of tokens', async () => {
-        // FIX
         const tokenBalanceAfterBurn = await tokenContract.balanceOf(account1.address);
         const diff = tokenBalanceBeforeBurn.sub(tokenBalanceAfterBurn);
-        expect(diff).to.eq(tokenBalanceBeforeBurn);
+        expect(diff).to.eq(tokenBalanceAfterBurn);
       });
     });
 
@@ -136,7 +139,6 @@ describe('NFT Shop', async () => {
       beforeEach(async () => {
         tokenBalanceBeforeBuyNft = await tokenContract.balanceOf(account1.address);
 
-        // TODO ALLOWANCE
         const allowTx = await tokenContract.connect(account1).approve(tokenSaleContract.address, TEST_TOKEN_PRICE);
         await allowTx.wait();
 
@@ -167,14 +169,28 @@ describe('NFT Shop', async () => {
       it('favors the public pool with the rounding', async () => {
         throw new Error('Not implemented');
       });
-    });
-  });
-  describe('When a user burns their NFT at the Shop contract', async () => {
-    it('gives the correct amount of ERC20 tokens', async () => {
-      throw new Error('Not implemented');
-    });
-    it('updates the public pool correctly', async () => {
-      throw new Error('Not implemented');
+
+      describe('When a user burns their NFT at the Shop contract', async () => {
+        let tokenBalanceBeforeBurnNft: BigNumber;
+
+        beforeEach(async () => {
+          tokenBalanceBeforeBurnNft = await tokenContract.balanceOf(account1.address);
+          const approveTx = await nftContract.connect(account1).approve(tokenSaleContract.address, TEST_NFT_ID);
+          await approveTx.wait();
+
+          const burnTx = await tokenSaleContract.connect(account1).burnNFT(TEST_NFT_ID);
+          await burnTx.wait();
+        });
+
+        it('gives the correct amount of ERC20 tokens', async () => {
+          const tokenBalanceAfterBurnNft = await tokenContract.balanceOf(account1.address);
+          expect(tokenBalanceAfterBurnNft).to.eq(tokenBalanceBeforeBurnNft.add(TEST_TOKEN_PRICE.div(2)));
+        });
+
+        it('updates the public pool correctly', async () => {
+          throw new Error('Not implemented');
+        });
+      });
     });
   });
 
