@@ -90,6 +90,7 @@ describe('Tokenized Ballot', async () => {
         const tokenAddress = await ballotContract.tokenContract();
         const tokenFactory = new MyToken__factory(deployer);
         const tokenContractUsedInBallot = tokenFactory.attach(tokenAddress);
+
         await expect(tokenContractUsedInBallot.totalSupply()).to.not.be.reverted;
         await expect(tokenContractUsedInBallot.balanceOf(account1.address)).to.not.be.reverted;
       });
@@ -101,6 +102,47 @@ describe('Tokenized Ballot', async () => {
 
       it('User 3 have zero voting rights', async () => {
         expect(await ballotContract.votingPower(account3.address)).to.be.eq(0);
+      });
+
+      describe('When the voter casts votes', async () => {
+        beforeEach(async () => {
+          // Account 1 votes
+          const voteTx1 = await ballotContract.connect(account1).vote(0, TEST_MINT_VALUE);
+          await voteTx1.wait();
+
+          // Account 2 votes
+          const voteTx2 = await ballotContract.connect(account2).vote(0, TEST_MINT_VALUE.div(2));
+          await voteTx2.wait();
+          const voteTx3 = await ballotContract.connect(account2).vote(1, TEST_MINT_VALUE.div(2));
+          await voteTx3.wait();
+        });
+
+        it('should register votes', async () => {
+          const proposal1 = await ballotContract.proposals(0);
+          const proposal2 = await ballotContract.proposals(1);
+
+          expect(proposal1.voteCount).to.be.eq(ethers.utils.parseEther('150'));
+          expect(proposal2.voteCount).to.be.eq(TEST_MINT_VALUE.div(2));
+        });
+
+        it('should revert vote', async () => {
+          await expect(ballotContract.connect(account1).vote(0, TEST_MINT_VALUE)).to.be.reverted;
+          await expect(ballotContract.connect(account3).vote(0, TEST_MINT_VALUE)).to.be.reverted;
+        });
+
+        it('should deduct voting power', async () => {
+          const votingPower1 = await ballotContract.votingPower(account1.address);
+          const votingPower2 = await ballotContract.votingPower(account2.address);
+
+          expect(votingPower1).to.be.eq(0);
+          expect(votingPower2).to.be.eq(0);
+        });
+
+        describe('When the result is queried', async () => {
+          it('should give correct winner', async () => {
+            expect(ethers.utils.parseBytes32String(await ballotContract.winnerName())).to.eq(TEST_PROPOSALS[0]);
+          });
+        });
       });
     });
   });
