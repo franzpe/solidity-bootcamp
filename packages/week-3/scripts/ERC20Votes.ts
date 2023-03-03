@@ -56,6 +56,7 @@ const main = async () => {
       currentBlock.number - 1
     }`,
   );
+
   votePowerAccount1 = await contract.getPastVotes(account1.address, currentBlock.number - 2);
   console.log(
     `Account1 had a vote power of ${ethers.utils.formatEther(votePowerAccount1)} units, at block ${
