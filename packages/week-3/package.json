@@ -4,6 +4,8 @@
   "description": "You can use this as a good starting point for development",
   "main": "index.js",
   "scripts": {
+    "hardhat:deploy-token": "npx hardhat deploy-token",
+    "hardhat:deploy-ballot": "npx hardhat deploy-ballot",
     "hardhat:votes": "npx hardhat run scripts/ERC20Votes.ts"
   },
   "author": "",
