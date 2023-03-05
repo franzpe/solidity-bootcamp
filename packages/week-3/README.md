@@ -1,6 +1,6 @@
 # Tokenized Ballot
 
-[Curicullum lina](https://github.com/Encode-Club-Solidity-Bootcamp/Lesson-12)
+[Curicullum link](https://github.com/Encode-Club-Solidity-Bootcamp/Lesson-12)
 
 ## Challenge explanation
 
@@ -13,13 +13,24 @@
 ### Requirements
 
 - Develop and run scripts for “TokenizedBallot.sol” within your group to
-  - give voting tokens
-  - delegating voting power
-  - casting votes
-  - checking vote power and querying results
+  - [x] give voting tokens
+  - [x] delegating voting power
+  - [] ballot contract deployment
+  - [] casting votes
+  - [] checking vote power and querying results
 - Write a report with each function execution and the transaction hash, if successful, or the revert reason, if failed
 
 ## Report
+
+Ballot For best counter-strike game version
+
+```
+Proposals:
+Proposal N. 1: counter-strike: 1.6
+Proposal N. 2: counter-strike: Source
+Proposal N. 3: counter-strike: Promod
+Proposal N. 4: counter-strike: GO
+```
 
 ### MyToken deployment
 
@@ -605,4 +616,59 @@ Account 0x7ee2d338B038120a5b43a9755402A580fE06bFB9 has 10.0
     }
   ]
 }
+```
+
+### Tokenized Ballot Contract deployment
+
+Ballot for best counter-strike game version
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/p/week-3    main !3 ?1 
+╰─ npm run hardhat:deploy-ballot                                                    ─╯
+
+> week-3@1.0.0 hardhat:deploy-ballot
+> npx hardhat deploy-ballot --tokenaddress 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5 '
+counter-strike: 1.6' 'counter-strike: Source' 'counter-strike: Promod' 'counter-strike:
+ GO'
+
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+Wallet balance: 227125906559581511 Wei
+Deploying Tokenized Ballot contract
+Proposals:
+Proposal N. 1: counter-strike: 1.6
+Proposal N. 2: counter-strike: Source
+Proposal N. 3: counter-strike: Promod
+Proposal N. 4: counter-strike: GO
+Deploying contract ...
+The Ballot contract was deployed at the address 0x681782241a0664F8221e1C5D531D05D88A8Cc
+9a3 for block number 8602393
+{
+  deployTxReceipt: {
+    to: null,
+    from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+    contractAddress: '0x681782241a0664F8221e1C5D531D05D88A8Cc9a3',
+    transactionIndex: 20,
+    gasUsed: BigNumber { value: "688835" },
+    logsBloom: '0x000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000',
+    blockHash: '0x3ee6a96b6417583399d1cb2bf5755364c7c6c20748de62e5829256b1f40256a4',
+    transactionHash: '0xfe568d3ff726ca727b3e86b64687f14535f12f7423bcd6a5e19952b68092eef
+8',
+    logs: [],
+    blockNumber: 8602395,
+    confirmations: 1,
+    cumulativeGasUsed: BigNumber { value: "5969969" },
+    effectiveGasPrice: BigNumber { value: "10022718960" },
+    status: 1,
+    type: 2,
+    byzantium: true,
+    events: []
+  }
+}
+
 ```
