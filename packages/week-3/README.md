@@ -294,3 +294,107 @@ Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
   ]
 }
 ```
+
+### Grant Minter Role
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/p/week-3    main !2 ?2 ────── ✔  16s     12:34:08 PM  ─╮
+╰─ npm run give-minter-role                                                                         ─╯
+
+> week-3@1.0.0 give-minter-role
+> npx ts-node --files ./scripts/giveMinterRole.ts 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5 0xA59b230b
+8f43C888F554F6b9207462fb8b9B2dE7 10
+
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+Minter role has been given to account 0xA59b230b8f43C888F554F6b9207462fb8b9B2dE7
+{
+  to: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+  from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+  contractAddress: null,
+  transactionIndex: 38,
+  gasUsed: BigNumber { value: "52095" },
+  logsBloom: '0x010000040000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000400000000000000000000000000000002000000000000000010000000000000000000000000000000000000000000000
+0000000001000000000000000000000000000000000000000000000000001001000000000000000000008080000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000
+0000000000000000000000100000001000010000000000000000000000000000000000000000000000000000001000000000000
+0000000000000',
+  blockHash: '0xfba51614876a23c7ac2149d5787fe455d55183990820e66ce53d4c19dd4ffc1f',
+  transactionHash: '0x426852c7af7b3b0fd8a4b6d1230452d95bd93b8e5ac229a20f3a6837ea4b2f62',
+  logs: [
+    {
+      transactionIndex: 38,
+      blockNumber: 8602063,
+      transactionHash: '0x426852c7af7b3b0fd8a4b6d1230452d95bd93b8e5ac229a20f3a6837ea4b2f62',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x',
+      logIndex: 99,
+      blockHash: '0xfba51614876a23c7ac2149d5787fe455d55183990820e66ce53d4c19dd4ffc1f'
+    }
+  ],
+  blockNumber: 8602063,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "6035364" },
+  effectiveGasPrice: BigNumber { value: "54495117705" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: [
+    {
+      transactionIndex: 38,
+      blockNumber: 8602063,
+      transactionHash: '0x426852c7af7b3b0fd8a4b6d1230452d95bd93b8e5ac229a20f3a6837ea4b2f62',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x',
+      logIndex: 99,
+      blockHash: '0xfba51614876a23c7ac2149d5787fe455d55183990820e66ce53d4c19dd4ffc1f',
+      args: [Array],
+      decode: [Function (anonymous)],
+      event: 'RoleGranted',
+      eventSignature: 'RoleGranted(bytes32,address,address)',
+      removeListener: [Function (anonymous)],
+      getBlock: [Function (anonymous)],
+      getTransaction: [Function (anonymous)],
+      getTransactionReceipt: [Function (anonymous)]
+    }
+  ]
+}
+```
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/p/week-3    main !1 ?2 ────── ✔  15s     04:16:29 PM  ─╮
+╰─ npm run give-minter-role                                                                         ─╯
+
+> week-3@1.0.0 give-minter-role
+> npx ts-node --files ./scripts/giveMinterRole.ts 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5 0xA59b230b
+8f43C888F554F6b9207462fb8b9B2dE7 10
+
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+Minter role has been given to account 0xA59b230b8f43C888F554F6b9207462fb8b9B2dE7
+{
+  to: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+  from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+  contractAddress: null,
+  transactionIndex: 24,
+  gasUsed: BigNumber { value: "29797" },
+  logsBloom: '0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000',
+  blockHash: '0xab8e9b4c8c624a47aabbc6c67cb99184fe5730c6789c015b97563fdd8a3a4c03',
+  transactionHash: '0xbbb511e572c278a31ea7aff0446892c91089ce1a02f8e80eef5b86d7c34e34fd',
+  logs: [],
+  blockNumber: 8602071,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "5088436" },
+  effectiveGasPrice: BigNumber { value: "63144902894" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: []
+}
+```
