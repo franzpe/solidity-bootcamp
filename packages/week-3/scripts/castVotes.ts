@@ -4,14 +4,12 @@ import { Ballot__factory } from '../typechain-types';
 const main = async () => {
   let [tokenAddress, proposalNum, amount] = process.argv.slice(2);
 
-  console.log(tokenAddress);
-
   if (!tokenAddress || !proposalNum || !amount)
     throw new Error('Missing parameters: tokenAddress or propsalNum or amount');
 
   const provider = new ethers.providers.InfuraProvider('goerli', process.env.INFURA_API_KEY);
 
-  const privateKey = process.env.PRIVATE_KEY2;
+  const privateKey = process.env.PRIVATE_KEY;
   if (!privateKey || privateKey.length <= 0) throw new Error('Missing environment: private key');
 
   const wallet = new ethers.Wallet(privateKey);

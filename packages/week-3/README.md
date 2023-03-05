@@ -17,7 +17,8 @@
   - [x] delegating voting power
   - [x] ballot contract deployment
   - [x] casting votes
-  - [] checking vote power and querying results
+  - [x] checking vote power
+  - [x] querying results
 - Write a report with each function execution and the transaction hash, if successful, or the revert reason, if failed
 
 ## Report
@@ -821,4 +822,24 @@ has 0.0 of voting power left.
   byzantium: true,
   events: []
 }
+```
+
+### Results
+
+Winning proposal is counter-strike: 1.6 with 16.0 votes.
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/packages/week-3    main !3 ?1 ────── ✔    06:50:54 PM  ─╮
+╰─ npm run results                                                                                 ─╯
+
+> week-3@1.0.0 results
+> npx ts-node --files ./scripts/queryResults.ts 0x681782241a0664F8221e1C5D531D05D88A8Cc9a3
+
+Winning proposal is counter-strike: 1.6 with 16.0 votes.
+All proposals overview:
+Proposal 1: counter-strike: 1.6 ended with 16.0 votes.
+Proposal 2: counter-strike: Source ended with 10.0 votes.
+Proposal 3: counter-strike: Promod ended with 0.0 votes.
+Proposal 4: counter-strike: GO ended with 4.0 votes.
+
 ```

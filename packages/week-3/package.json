@@ -8,6 +8,7 @@
     "give-minter-role": "npx ts-node --files ./scripts/giveMinterRole.ts 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5 0xA59b230b8f43C888F554F6b9207462fb8b9B2dE7 10",
     "delegate-voting-power": "npx ts-node --files ./scripts/delegateVotingPower.ts 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5",
     "cast-votes": "npx ts-node --files ./scripts/castVotes.ts 0x681782241a0664F8221e1C5D531D05D88A8Cc9a3 3 4",
+    "results": "npx ts-node --files ./scripts/queryResults.ts 0x681782241a0664F8221e1C5D531D05D88A8Cc9a3",
     "hardhat:deploy-token": "npx hardhat deploy-token",
     "hardhat:deploy-ballot": "npx hardhat deploy-ballot --tokenaddress 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5 'counter-strike: 1.6' 'counter-strike: Source' 'counter-strike: Promod' 'counter-strike: GO'",
     "hardhat:votes": "npx hardhat run scripts/ERC20Votes.ts"
