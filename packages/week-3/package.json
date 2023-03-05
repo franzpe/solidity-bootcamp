@@ -4,6 +4,7 @@
   "description": "You can use this as a good starting point for development",
   "main": "index.js",
   "scripts": {
+    "mint-tokens": "npx ts-node --files ./scripts/mintTokens.ts 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5 0x7ee2d338B038120a5b43a9755402A580fE06bFB9 10",
     "hardhat:deploy-token": "npx hardhat deploy-token",
     "hardhat:deploy-ballot": "npx hardhat deploy-ballot",
     "hardhat:votes": "npx hardhat run scripts/ERC20Votes.ts"

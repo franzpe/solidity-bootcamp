@@ -10,9 +10,18 @@
 - **Write a report** with each function execution and the transaction hash, if successful, or the revert reason, if failed
 - Share your code in a github repo in the submission form
 
+### Requirements
+
+- Develop and run scripts for “TokenizedBallot.sol” within your group to
+  - give voting tokens
+  - delegating voting power
+  - casting votes
+  - checking vote power and querying results
+- Write a report with each function execution and the transaction hash, if successful, or the revert reason, if failed
+
 ## Report
 
-### "MyToken" deployment
+### MyToken deployment
 
 ```
 Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
@@ -41,5 +50,247 @@ The token contract was deployed at the address 0x15545Ed1515c1c7Fe216465F61F4d3C
     byzantium: true,
     events: [ [Object], [Object] ]
   }
+}
+```
+
+### Mint MyTokens
+
+For address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC mint 10 tokens:
+
+```
+script run: "mint-tokens": "npx ts-node --files ./scripts/mintTokens.ts 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC 10",
+
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+10000000000000000000 tokens have been minted for address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+{
+  to: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+  from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+  contractAddress: null,
+  transactionIndex: 54,
+  gasUsed: BigNumber { value: "73354" },
+  logsBloom: '0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000002000000000000000010000000800000000000000000000000000000000000000
+0000000000020000000000000000000800000000000000000000000010000001000000000000000000008080000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000
+0000000000000000000000000000000000000000000000002000000000000000000000000000000000000000001000000000000
+0000000000000',
+  blockHash: '0x7feaa668640f3a7407f5db7ea594473d0b8aea656b4a4f034311f9f5b1b53980',
+  transactionHash: '0x00b789aba5dd3a0ac9e04ee8e47dfa12eaa90437b80835769914278d4ddaff83',
+  logs: [
+    {
+      transactionIndex: 54,
+      blockNumber: 8601139,
+      transactionHash: '0x00b789aba5dd3a0ac9e04ee8e47dfa12eaa90437b80835769914278d4ddaff83',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x0000000000000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 149,
+      blockHash: '0x7feaa668640f3a7407f5db7ea594473d0b8aea656b4a4f034311f9f5b1b53980'
+    }
+  ],
+  blockNumber: 8601139,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "8666160" },
+  effectiveGasPrice: BigNumber { value: "30599781367" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: [
+    {
+      transactionIndex: 54,
+      blockNumber: 8601139,
+      transactionHash: '0x00b789aba5dd3a0ac9e04ee8e47dfa12eaa90437b80835769914278d4ddaff83',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x0000000000000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 149,
+      blockHash: '0x7feaa668640f3a7407f5db7ea594473d0b8aea656b4a4f034311f9f5b1b53980',
+      args: [Array],
+      decode: [Function (anonymous)],
+      event: 'Transfer',
+      eventSignature: 'Transfer(address,address,uint256)',
+      removeListener: [Function (anonymous)],
+      getBlock: [Function (anonymous)],
+      getTransaction: [Function (anonymous)],
+      getTransactionReceipt: [Function (anonymous)]
+    }
+  ]
+}
+```
+
+For address 0x7ee2d338B038120a5b43a9755402A580fE06bFB9 mint 10 tokens:
+
+```
+script run: mint-tokens": "npx ts-node --files ./scripts/mintTokens.ts 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5 0x7ee2d338B038120a5b43a9755402A580fE06bFB9 10",
+
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+10000000000000000000 tokens have been minted for address 0x7ee2d338B038120a5b43a9755402A580fE06bFB9
+{
+  to: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+  from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+  contractAddress: null,
+  transactionIndex: 26,
+  gasUsed: BigNumber { value: "90466" },
+  logsBloom: '0x000000000000000000000000000000000000000000000000000000000040000000000000000000000000000
+0000000000000000000000000000000000000002000000000000000010000000800000008000000000000000000000000000000
+0000000000020000000000000000000800000000000000000000000010000000000000000000000000008000000000000000000
+0000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000020000
+0000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000
+0000000000000',
+  blockHash: '0x055670521b35411e8ce17558404c2e95f598f444f28e61905c1ca9ac5c0fc467',
+  transactionHash: '0xe1fb92130d7e17f869f7499950f741c56f07275778ead1a8a745ee3c3661299a',
+  logs: [
+    {
+      transactionIndex: 26,
+      blockNumber: 8601164,
+      transactionHash: '0xe1fb92130d7e17f869f7499950f741c56f07275778ead1a8a745ee3c3661299a',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x0000000000000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 60,
+      blockHash: '0x055670521b35411e8ce17558404c2e95f598f444f28e61905c1ca9ac5c0fc467'
+    }
+  ],
+  blockNumber: 8601164,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "4564972" },
+  effectiveGasPrice: BigNumber { value: "25798361056" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: [
+    {
+      transactionIndex: 26,
+      blockNumber: 8601164,
+      transactionHash: '0xe1fb92130d7e17f869f7499950f741c56f07275778ead1a8a745ee3c3661299a',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x0000000000000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 60,
+      blockHash: '0x055670521b35411e8ce17558404c2e95f598f444f28e61905c1ca9ac5c0fc467',
+      args: [Array],
+      decode: [Function (anonymous)],
+      event: 'Transfer',
+      eventSignature: 'Transfer(address,address,uint256)',
+      removeListener: [Function (anonymous)],
+      getBlock: [Function (anonymous)],
+      getTransaction: [Function (anonymous)],
+      getTransactionReceipt: [Function (anonymous)]
+    }
+  ]
+}
+
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+10000000000000000000 tokens have been minted for address 0x7ee2d338B038120a5b43a9755402A580fE06bFB9
+{
+  to: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+  from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+  contractAddress: null,
+  transactionIndex: 26,
+  gasUsed: BigNumber { value: "90466" },
+  logsBloom: '0x000000000000000000000000000000000000000000000000000000000040000000000000000000000000000
+0000000000000000000000000000000000000002000000000000000010000000800000008000000000000000000000000000000
+0000000000020000000000000000000800000000000000000000000010000000000000000000000000008000000000000000000
+0000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000020000
+0000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000
+0000000000000',
+  blockHash: '0x055670521b35411e8ce17558404c2e95f598f444f28e61905c1ca9ac5c0fc467',
+  transactionHash: '0xe1fb92130d7e17f869f7499950f741c56f07275778ead1a8a745ee3c3661299a',
+  logs: [
+    {
+      transactionIndex: 26,
+      blockNumber: 8601164,
+      transactionHash: '0xe1fb92130d7e17f869f7499950f741c56f07275778ead1a8a745ee3c3661299a',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x0000000000000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 60,
+      blockHash: '0x055670521b35411e8ce17558404c2e95f598f444f28e61905c1ca9ac5c0fc467'
+    }
+  ],
+  blockNumber: 8601164,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "4564972" },
+  effectiveGasPrice: BigNumber { value: "25798361056" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: [
+    {
+      transactionIndex: 26,
+      blockNumber: 8601164,
+      transactionHash: '0xe1fb92130d7e17f869f7499950f741c56f07275778ead1a8a745ee3c3661299a',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x0000000000000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 60,
+      blockHash: '0x055670521b35411e8ce17558404c2e95f598f444f28e61905c1ca9ac5c0fc467',
+      args: [Array],
+      decode: [Function (anonymous)],
+      event: 'Transfer',
+      eventSignature: 'Transfer(address,address,uint256)',
+      removeListener: [Function (anonymous)],
+      getBlock: [Function (anonymous)],
+      getTransaction: [Function (anonymous)],
+      getTransactionReceipt: [Function (anonymous)]
+    }
+  ]
+}
+
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+10000000000000000000 tokens have been minted for address 0x7ee2d338B038120a5b43a9755402A580fE06bFB9
+{
+  to: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+  from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+  contractAddress: null,
+  transactionIndex: 26,
+  gasUsed: BigNumber { value: "90466" },
+  logsBloom: '0x000000000000000000000000000000000000000000000000000000000040000000000000000000000000000
+0000000000000000000000000000000000000002000000000000000010000000800000008000000000000000000000000000000
+0000000000020000000000000000000800000000000000000000000010000000000000000000000000008000000000000000000
+0000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000020000
+0000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000
+0000000000000',
+  blockHash: '0x055670521b35411e8ce17558404c2e95f598f444f28e61905c1ca9ac5c0fc467',
+  transactionHash: '0xe1fb92130d7e17f869f7499950f741c56f07275778ead1a8a745ee3c3661299a',
+  logs: [
+    {
+      transactionIndex: 26,
+      blockNumber: 8601164,
+      transactionHash: '0xe1fb92130d7e17f869f7499950f741c56f07275778ead1a8a745ee3c3661299a',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x0000000000000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 60,
+      blockHash: '0x055670521b35411e8ce17558404c2e95f598f444f28e61905c1ca9ac5c0fc467'
+    }
+  ],
+  blockNumber: 8601164,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "4564972" },
+  effectiveGasPrice: BigNumber { value: "25798361056" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: [
+    {
+      transactionIndex: 26,
+      blockNumber: 8601164,
+      transactionHash: '0xe1fb92130d7e17f869f7499950f741c56f07275778ead1a8a745ee3c3661299a',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x0000000000000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 60,
+      blockHash: '0x055670521b35411e8ce17558404c2e95f598f444f28e61905c1ca9ac5c0fc467',
+      args: [Array],
+      decode: [Function (anonymous)],
+      event: 'Transfer',
+      eventSignature: 'Transfer(address,address,uint256)',
+      removeListener: [Function (anonymous)],
+      getBlock: [Function (anonymous)],
+      getTransaction: [Function (anonymous)],
+      getTransactionReceipt: [Function (anonymous)]
+    }
+  ]
 }
 ```
