@@ -15,8 +15,8 @@
 - Develop and run scripts for “TokenizedBallot.sol” within your group to
   - [x] give voting tokens
   - [x] delegating voting power
-  - [] ballot contract deployment
-  - [] casting votes
+  - [x] ballot contract deployment
+  - [x] casting votes
   - [] checking vote power and querying results
 - Write a report with each function execution and the transaction hash, if successful, or the revert reason, if failed
 
@@ -640,7 +640,7 @@ Proposal N. 2: counter-strike: Source
 Proposal N. 3: counter-strike: Promod
 Proposal N. 4: counter-strike: GO
 Deploying contract ...
-The Ballot contract was deployed at the address 0x681782241a0664F8221e1C5D531D05D88A8Cc
+The Ballot contract was deployed at the address 0x681782241a0664F8221e1C5D531D05D88A8Cc9a3
 9a3 for block number 8602393
 {
   deployTxReceipt: {
@@ -671,4 +671,154 @@ The Ballot contract was deployed at the address 0x681782241a0664F8221e1C5D531D05
   }
 }
 
+```
+
+### Cast votes
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/packages/week-3    main !2 ?1 ───── 1 ✘    06:01:03 PM  ─╮
+╰─ npm run cast-votes                                                                               ─╯
+
+> week-3@1.0.0 cast-votes
+> npx ts-node --files ./scripts/castVotes.ts 0x681782241a0664F8221e1C5D531D05D88A8Cc9a3 1 10
+
+0x681782241a0664F8221e1C5D531D05D88A8Cc9a3
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+Account 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC has voted for proposal num: 1 with amount of 10 and
+has 10000000000000000010 of voting power left.
+{
+  to: '0x681782241a0664F8221e1C5D531D05D88A8Cc9a3',
+  from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+  contractAddress: null,
+  transactionIndex: 31,
+  gasUsed: BigNumber { value: "86554" },
+  logsBloom: '0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000',
+  blockHash: '0xe85e2cea0b888ba8250e1def7c592752b287a565dbbffe8bf6d2f81c43ac78d5',
+  transactionHash: '0x240c6bcd0a5334f63cea055a29208525a7b54f9939162294fa28c4b6c3ed5375',
+  logs: [],
+  blockNumber: 8602511,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "5742076" },
+  effectiveGasPrice: BigNumber { value: "7763063720" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: []
+}
+```
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/p/week-3    main !2 ?1 ────── ✔  15s     06:03:42 PM  ─╮
+╰─ npm run cast-votes                                                                               ─╯
+
+> week-3@1.0.0 cast-votes
+> npx ts-node --files ./scripts/castVotes.ts 0x681782241a0664F8221e1C5D531D05D88A8Cc9a3 0 10
+
+0x681782241a0664F8221e1C5D531D05D88A8Cc9a3
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+Account 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC has voted for proposal num: 0 with amount of 10 and
+has 0.00000000000000001 of voting power left.
+{
+  to: '0x681782241a0664F8221e1C5D531D05D88A8Cc9a3',
+  from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+  contractAddress: null,
+  transactionIndex: 37,
+  gasUsed: BigNumber { value: "69442" },
+  logsBloom: '0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000',
+  blockHash: '0xd01baed3ba399f0c8fe70dfc57828824d49597b74c44fd65254bd88fe3557c40',
+  transactionHash: '0xef9cbc0d32351954e2db0c979854cee75bbd784eaad8ebc35ade9b10318e15f0',
+  logs: [],
+  blockNumber: 8602524,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "7101990" },
+  effectiveGasPrice: BigNumber { value: "7804138583" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: []
+}
+```
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/packages/week-3    main !2 ?1 ─────── ✔    06:06:44 PM  ─╮
+╰─ npm run cast-votes                                                                               ─╯
+
+> week-3@1.0.0 cast-votes
+> npx ts-node --files ./scripts/castVotes.ts 0x681782241a0664F8221e1C5D531D05D88A8Cc9a3 0 6
+
+0x681782241a0664F8221e1C5D531D05D88A8Cc9a3
+Connected to the wallet address 0x7ee2d338B038120a5b43a9755402A580fE06bFB9
+Account 0x7ee2d338B038120a5b43a9755402A580fE06bFB9 has voted for proposal num: 0 with amount of 6 and h
+as 4.0 of voting power left.
+{
+  to: '0x681782241a0664F8221e1C5D531D05D88A8Cc9a3',
+  from: '0x7ee2d338B038120a5b43a9755402A580fE06bFB9',
+  contractAddress: null,
+  transactionIndex: 32,
+  gasUsed: BigNumber { value: "66490" },
+  logsBloom: '0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000',
+  blockHash: '0x262bf9c913796e05b30645cb439227b4954c6093bf4d0e195512caa617859555',
+  transactionHash: '0x3177006da17eb386ed080119739211446119e3318855b29cb3782842a25368ab',
+  logs: [],
+  blockNumber: 8602536,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "6416415" },
+  effectiveGasPrice: BigNumber { value: "5587701998" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: []
+}
+```
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/p/week-3    main !2 ?1 ──── 1 ✘  3s     06:10:08 PM  ─╮
+╰─ npm run cast-votes                                                                              ─╯
+
+> week-3@1.0.0 cast-votes
+> npx ts-node --files ./scripts/castVotes.ts 0x681782241a0664F8221e1C5D531D05D88A8Cc9a3 3 4
+
+0x681782241a0664F8221e1C5D531D05D88A8Cc9a3
+Connected to the wallet address 0x7ee2d338B038120a5b43a9755402A580fE06bFB9
+Account 0x7ee2d338B038120a5b43a9755402A580fE06bFB9 has voted for proposal num: 3 with amount of 4 and
+has 0.0 of voting power left.
+{
+  to: '0x681782241a0664F8221e1C5D531D05D88A8Cc9a3',
+  from: '0x7ee2d338B038120a5b43a9755402A580fE06bFB9',
+  contractAddress: null,
+  transactionIndex: 16,
+  gasUsed: BigNumber { value: "66502" },
+  logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000',
+  blockHash: '0x5eae61e619990be50c8754716dd4e1885b4b911a46348426a276a80d1aa73644',
+  transactionHash: '0x435bfc7a80d737068fc672afa81d0903f048e85dea34353196029d3bae4b755c',
+  logs: [],
+  blockNumber: 8602544,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "8009755" },
+  effectiveGasPrice: BigNumber { value: "5424962645" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: []
+}
 ```
