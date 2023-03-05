@@ -1,6 +1,6 @@
 # Tokenized Ballot
 
-[Curicullum link](https://github.com/Encode-Club-Solidity-Bootcamp/Lesson-12)
+[Curicullum lina](https://github.com/Encode-Club-Solidity-Bootcamp/Lesson-12)
 
 ## Challenge explanation
 
@@ -396,5 +396,213 @@ Minter role has been given to account 0xA59b230b8f43C888F554F6b9207462fb8b9B2dE7
   type: 2,
   byzantium: true,
   events: []
+}
+```
+
+### Voting power delegation
+
+Self deletagion
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/p/week-3    main !2 ?2 ────── ✔  23s     04:37:06 PM  ─╮
+╰─ npm run delegate-voting-power                                                                    ─╯
+
+> week-3@1.0.0 delegate-voting-power
+> npx ts-node --files ./scripts/delegateVotingPower.ts 0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5 0x044
+D8f25B506CE1872008dAd807609B0C21Cb1BC
+
+c7bbf1f217021c0788f7f5bd7cba732554fd9613302ca5676d5c7fb774256f56
+Connected to the wallet address 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+Voting power has been self delegated to account 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC
+Account 0x044D8f25B506CE1872008dAd807609B0C21Cb1BC has 20.00000000000000001
+{
+  to: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+  from: '0x044D8f25B506CE1872008dAd807609B0C21Cb1BC',
+  contractAddress: null,
+  transactionIndex: 55,
+  gasUsed: BigNumber { value: "28968" },
+  logsBloom: '0x000000000000000000000000000000000000200000000000000000000000000000000000000000000000100
+0000000000002000000000000000000000000002000000000000000010000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000001000000000000000000008080000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000
+0000000000000',
+  blockHash: '0x5d32650cf57034258d5e3704b8c07d144a734c82f741ccc8683ba91a46762b43',
+  transactionHash: '0x8305665043161e0da46c56861d02ac7b50a88684a7d9521570920f0aa0b8c468',
+  logs: [
+    {
+      transactionIndex: 55,
+      blockNumber: 8602173,
+      transactionHash: '0x8305665043161e0da46c56861d02ac7b50a88684a7d9521570920f0aa0b8c468',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x',
+      logIndex: 95,
+      blockHash: '0x5d32650cf57034258d5e3704b8c07d144a734c82f741ccc8683ba91a46762b43'
+    }
+  ],
+  blockNumber: 8602173,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "6307359" },
+  effectiveGasPrice: BigNumber { value: "44497483055" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: [
+    {
+      transactionIndex: 55,
+      blockNumber: 8602173,
+      transactionHash: '0x8305665043161e0da46c56861d02ac7b50a88684a7d9521570920f0aa0b8c468',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x',
+      logIndex: 95,
+      blockHash: '0x5d32650cf57034258d5e3704b8c07d144a734c82f741ccc8683ba91a46762b43',
+      args: [Array],
+      decode: [Function (anonymous)],
+      event: 'DelegateChanged',
+      eventSignature: 'DelegateChanged(address,address,address)',
+      removeListener: [Function (anonymous)],
+      getBlock: [Function (anonymous)],
+      getTransaction: [Function (anonymous)],
+      getTransactionReceipt: [Function (anonymous)]
+    }
+  ]
+}
+```
+
+```
+╭─    ~/Doc/P/solidity-bootcamp/p/week-3    main !2 ?2 
+╰─ npm run delegate-voting-power                                                    ─╯
+
+> week-3@1.0.0 delegate-voting-power
+> npx ts-node --files ./scripts/delegateVotingPower.ts 0x15545Ed1515c1c7Fe216465F61F4d3
+Ca2F076AF5
+
+Connected to the wallet address 0x7ee2d338B038120a5b43a9755402A580fE06bFB9
+Voting power has been self delegated to account 0x7ee2d338B038120a5b43a9755402A580fE06b
+FB9
+Account 0x7ee2d338B038120a5b43a9755402A580fE06bFB9 has 10.0
+{
+  to: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+  from: '0x7ee2d338B038120a5b43a9755402A580fE06bFB9',
+  contractAddress: null,
+  transactionIndex: 28,
+  gasUsed: BigNumber { value: "112623" },
+  logsBloom: '0x00000000000000000000000000000000000020000000000000000000004000000000000
+000000200000010000000000000020000000000000000000000000020000000000000000100000000000000
+080000000000000000000000000000000000000000000000000040000000000000000000000000000000000
+000000001000000000000000000008080000000000000000000000000000000000000000000040000000000
+000000000040000000000000000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000000000000000000000010000000000000000000
+000000',
+  blockHash: '0x561feedb7d441ca65d5d4ef732a7d3120ea9f57f2abc734ba6fa6fa3175fe80d',
+  transactionHash: '0x3c605e3d54579203e88e6e6549c3b140995920b5bbb346d43a595368c8a8774b'
+,
+  logs: [
+    {
+      transactionIndex: 28,
+      blockNumber: 8602212,
+      transactionHash: '0x3c605e3d54579203e88e6e6549c3b140995920b5bbb346d43a595368c8a87
+74b',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x',
+      logIndex: 64,
+      blockHash: '0x561feedb7d441ca65d5d4ef732a7d3120ea9f57f2abc734ba6fa6fa3175fe80d'
+    },
+    {
+      transactionIndex: 28,
+      blockNumber: 8602212,
+      transactionHash: '0x3c605e3d54579203e88e6e6549c3b140995920b5bbb346d43a595368c8a87
+74b',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x000000000000000000000000000000000000000000000001a055690d9db8000a00000000
+0000000000000000000000000000000000000001158e460913d0000a',
+      logIndex: 65,
+      blockHash: '0x561feedb7d441ca65d5d4ef732a7d3120ea9f57f2abc734ba6fa6fa3175fe80d'
+    },
+    {
+      transactionIndex: 28,
+      blockNumber: 8602212,
+      transactionHash: '0x3c605e3d54579203e88e6e6549c3b140995920b5bbb346d43a595368c8a87
+74b',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 66,
+      blockHash: '0x561feedb7d441ca65d5d4ef732a7d3120ea9f57f2abc734ba6fa6fa3175fe80d'
+    }
+  ],
+  blockNumber: 8602212,
+  confirmations: 1,
+  cumulativeGasUsed: BigNumber { value: "4474505" },
+  effectiveGasPrice: BigNumber { value: "24025303059" },
+  status: 1,
+  type: 2,
+  byzantium: true,
+  events: [
+    {
+      transactionIndex: 28,
+      blockNumber: 8602212,
+      transactionHash: '0x3c605e3d54579203e88e6e6549c3b140995920b5bbb346d43a595368c8a87
+74b',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x',
+      logIndex: 64,
+      blockHash: '0x561feedb7d441ca65d5d4ef732a7d3120ea9f57f2abc734ba6fa6fa3175fe80d',
+      args: [Array],
+      decode: [Function (anonymous)],
+      event: 'DelegateChanged',
+      eventSignature: 'DelegateChanged(address,address,address)',
+      removeListener: [Function (anonymous)],
+      getBlock: [Function (anonymous)],
+      getTransaction: [Function (anonymous)],
+      getTransactionReceipt: [Function (anonymous)]
+    },
+    {
+      transactionIndex: 28,
+      blockNumber: 8602212,
+      transactionHash: '0x3c605e3d54579203e88e6e6549c3b140995920b5bbb346d43a595368c8a87
+74b',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x000000000000000000000000000000000000000000000001a055690d9db8000a00000000
+0000000000000000000000000000000000000001158e460913d0000a',
+      logIndex: 65,
+      blockHash: '0x561feedb7d441ca65d5d4ef732a7d3120ea9f57f2abc734ba6fa6fa3175fe80d',
+      args: [Array],
+      decode: [Function (anonymous)],
+      event: 'DelegateVotesChanged',
+      eventSignature: 'DelegateVotesChanged(address,uint256,uint256)',
+      removeListener: [Function (anonymous)],
+      getBlock: [Function (anonymous)],
+      getTransaction: [Function (anonymous)],
+      getTransactionReceipt: [Function (anonymous)]
+    },
+    {
+      transactionIndex: 28,
+      blockNumber: 8602212,
+      transactionHash: '0x3c605e3d54579203e88e6e6549c3b140995920b5bbb346d43a595368c8a87
+74b',
+      address: '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5',
+      topics: [Array],
+      data: '0x000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000008ac7230489e80000',
+      logIndex: 66,
+      blockHash: '0x561feedb7d441ca65d5d4ef732a7d3120ea9f57f2abc734ba6fa6fa3175fe80d',
+      args: [Array],
+      decode: [Function (anonymous)],
+      event: 'DelegateVotesChanged',
+      eventSignature: 'DelegateVotesChanged(address,uint256,uint256)',
+      removeListener: [Function (anonymous)],
+      getBlock: [Function (anonymous)],
+      getTransaction: [Function (anonymous)],
+      getTransactionReceipt: [Function (anonymous)]
+    }
+  ]
 }
 ```
