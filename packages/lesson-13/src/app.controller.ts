@@ -1,17 +1,40 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { AppService, PaymentOrder, PaymentOrderDTO } from './app.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHelloHome(): string {
-    return this.appService.getHello();
+  @Get('/contract-address')
+  getContractAddress(): string {
+    return this.appService.getContractAddress();
   }
 
-  @Get('/hello')
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('/total-supply')
+  getTotalSupply(): Promise<number> {
+    return this.appService.getTotalSupply();
+  }
+
+  @Get('/allowance')
+  getAllowance(
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ): Promise<number> {
+    return this.appService.getAllowance(from, to);
+  }
+
+  @Get('/transaction-status')
+  getTransStatus(@Query('hash') hash: string): Promise<string> {
+    return this.appService.getTransactionStatus(hash);
+  }
+
+  @Get('/payment-orders')
+  getPaymentOrders(): PaymentOrder[] {
+    return this.appService.listPaymentOrders();
+  }
+
+  @Post('/payment-order')
+  paymentOrder(@Body() body: PaymentOrderDTO) {
+    return this.appService.createPaymentOrder(body.value, body.secret);
   }
 }
