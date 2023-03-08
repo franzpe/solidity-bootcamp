@@ -1,5 +1,10 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { AppService, PaymentOrder, PaymentOrderDTO } from './app.service';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  AppService,
+  FulfillPaymentOrderDTO,
+  PaymentOrder,
+  PaymentOrderDTO,
+} from './app.service';
 
 @Controller()
 export class AppController {
@@ -36,5 +41,14 @@ export class AppController {
   @Post('/payment-order')
   paymentOrder(@Body() body: PaymentOrderDTO) {
     return this.appService.createPaymentOrder(body.value, body.secret);
+  }
+
+  @Post('/fulfill-payment')
+  fulfillPaymentOrder(@Body() body: FulfillPaymentOrderDTO) {
+    return this.appService.fulfillPaymentOrder(
+      body.id,
+      body.secret,
+      body.address,
+    );
   }
 }

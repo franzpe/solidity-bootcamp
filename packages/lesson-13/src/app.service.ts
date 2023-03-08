@@ -1,13 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ethers } from 'ethers';
 import * as tokenJson from './assets/MyToken.json';
 
-const CONTRACT_ADDRESS = '0xF87E4c0d83f54e51FE5e911FaF4ce9D4D8e05310';
+const CONTRACT_ADDRESS = '0x15545Ed1515c1c7Fe216465F61F4d3Ca2F076AF5';
 
 export class PaymentOrder {
   id: number;
   secret: string;
   value: number;
+}
+
+export class FulfillPaymentOrderDTO {
+  id: number;
+  secret: string;
+  address: string;
 }
 
 export class PaymentOrderDTO {
@@ -22,7 +35,7 @@ export class AppService {
 
   paymentOrders: PaymentOrder[];
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.provider = ethers.getDefaultProvider('goerli');
     this.paymentOrders = new Array<PaymentOrder>();
 
@@ -69,5 +82,33 @@ export class AppService {
     newPaymentOrder.secret = secret;
     newPaymentOrder.value = value;
     this.paymentOrders.push(newPaymentOrder);
+  }
+
+  async fulfillPaymentOrder(id: number, secret: string, address: string) {
+    const paymentOrder = this.paymentOrders.find((p) => p.id === id);
+
+    if (!paymentOrder) {
+      throw new NotFoundException('Payment order not found');
+    }
+
+    if (paymentOrder.secret !== secret) {
+      throw new ForbiddenException('Invalid secret');
+    }
+
+    const privateKey = this.configService.get<string>('PRIVATE_KEY');
+
+    if (!privateKey) {
+      throw new InternalServerErrorException('Wrong server configuration');
+    }
+
+    const signer = new ethers.Wallet(privateKey, this.provider);
+
+    const tx = await this.contract
+      .connect(signer)
+      .mint(address, ethers.utils.parseEther(paymentOrder.value.toString()));
+
+    const txReceipt = await tx.wait();
+
+    console.log(txReceipt);
   }
 }
