@@ -1,0 +1,14 @@
+<div class="container text-center mt-5 mb-5">
+  <h1>Hello {{ name }} 1</h1>
+  <p *ngIf="blockNumber && blockNumber > 0">
+    We are connected to goerli testnet {{ blockNumber }}
+  </p>
+  <button (click)="syncBlock()">sync</button>
+  <div *ngIf="transactions && transactions.length > 0">
+    <p>Transactions list</p>
+    <ul>
+      <li *ngFor="let transaction of transactions">{{ transaction }}</li>
+    </ul>
+  </div>
+  <button (click)="clear()">clear</button>
+</div>
