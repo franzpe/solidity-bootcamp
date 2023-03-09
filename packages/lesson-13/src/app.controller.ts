@@ -4,6 +4,7 @@ import {
   FulfillPaymentOrderDTO,
   PaymentOrder,
   PaymentOrderDTO,
+  RequestTokensDTO,
 } from './app.service';
 
 @Controller()
@@ -11,8 +12,8 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('/contract-address')
-  getContractAddress(): string {
-    return this.appService.getContractAddress();
+  getContractAddress(): { address: string } {
+    return { address: this.appService.getContractAddress() };
   }
 
   @Get('/total-supply')
@@ -50,5 +51,10 @@ export class AppController {
       body.secret,
       body.address,
     );
+  }
+
+  @Post('/request-tokens')
+  requestTokens(@Body() body: RequestTokensDTO) {
+    return { result: this.appService.requestTokens(body.address, body.amount) };
   }
 }

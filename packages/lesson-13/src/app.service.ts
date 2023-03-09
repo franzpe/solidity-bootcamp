@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -28,6 +27,11 @@ export class PaymentOrderDTO {
   secret: string;
 }
 
+export class RequestTokensDTO {
+  amount: number;
+  address: string;
+}
+
 @Injectable()
 export class AppService {
   provider: ethers.providers.Provider;
@@ -44,6 +48,22 @@ export class AppService {
       tokenJson.abi,
       this.provider,
     );
+  }
+
+  async requestTokens(address: string, amount: number) {
+    const privateKey = this.configService.get<string>('PRIVATE_KEY');
+
+    if (!privateKey) {
+      throw new InternalServerErrorException('Wrong server configuration');
+    }
+
+    const signer = new ethers.Wallet(privateKey, this.provider);
+
+    const tx = await this.contract.connect(signer).mint(address, amount);
+
+    const txReceipt = await tx.wait();
+
+    return txReceipt.hash;
   }
 
   async getTransactionStatus(hash: string) {

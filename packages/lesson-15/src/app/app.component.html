@@ -1,14 +1,29 @@
 <div class="container text-center mt-5 mb-5">
   <h1>Hello {{ name }} 1</h1>
-  <p *ngIf="blockNumber && blockNumber > 0">
-    We are connected to goerli testnet {{ blockNumber }}
-  </p>
+  <p *ngIf="blockNumber && blockNumber > 0">We are connected to goerli testnet {{ blockNumber }}</p>
   <button (click)="syncBlock()">sync</button>
-  <div *ngIf="transactions && transactions.length > 0">
+  <button (click)="createWallet()" class="btn btn-success mx-4">
+    {{ userWallet ? 'Create another' : 'Create' }} Wallet
+  </button>
+  <button (click)="clear()">clear</button>
+  <div *ngIf="userWallet" class="card my-4">
+    <h5>User Wallet</h5>
+    <h6>{{ userWallet.address }}</h6>
+    <p>Balance: {{ userEthBalance }} ETH</p>
+    <p *ngIf="userTokenBalance">Token Balance: {{ userTokenBalance }} MTK</p>
+    <input #mintAmount type="number" min="0" max="10" class="input" class="my-4" />
+    <button *ngIf="mintAmount.value" class="btn btn-danger" (click)="requestTokens(mintAmount.value)">
+      Request Tokens
+    </button>
+  </div>
+  <div class="card">
+    <h5 *ngIf="tokenContractAddress">Token address: {{ tokenContractAddress }}</h5>
+    <p>Total Supply: {{ totalSupply }} MTK</p>
+  </div>
+  <div *ngIf="transactions && transactions.length > -1">
     <p>Transactions list</p>
     <ul>
       <li *ngFor="let transaction of transactions">{{ transaction }}</li>
     </ul>
   </div>
-  <button (click)="clear()">clear</button>
 </div>
