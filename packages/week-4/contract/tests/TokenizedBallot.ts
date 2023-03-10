@@ -2,7 +2,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 import { ethers } from 'hardhat';
-import { Ballot__factory, MyToken, MyToken__factory, TokenizedBallot } from '../typechain-types';
+import { TokenizedBallot__factory, MyToken, MyToken__factory, TokenizedBallot } from '../typechain-types';
 
 // Game voting proposals
 const TEST_PROPOSALS = ['Counter-Strike 1.6', 'Counter-Strike: Source', 'Counter-Strike: GO'];
@@ -61,9 +61,9 @@ describe('Tokenized Ballot', async () => {
       expect(await myTokenContract.getVotes(account3.address)).to.be.eq(0);
     });
 
-    describe('when ballot is announced (deployed)', async () => {
+    describe('when ballot is nnounced (deployed)', async () => {
       beforeEach(async () => {
-        const ballotContractFactory = new Ballot__factory(deployer);
+        const ballotContractFactory = new TokenizedBallot__factory(deployer);
         targetBlockNumber = BigNumber.from((await ethers.provider.getBlock('latest')).number);
         ballotContract = await ballotContractFactory.deploy(
           TEST_PROPOSALS.map(prop => ethers.utils.formatBytes32String(prop)),
@@ -78,6 +78,10 @@ describe('Tokenized Ballot', async () => {
             TEST_PROPOSALS[i],
           );
         }
+      });
+
+      it('has correct count of proposals', async () => {
+        expect(await ballotContract.proposalsLength()).to.be.eq(TEST_PROPOSALS.length);
       });
 
       it('has zero votes for all proposals', async () => {
