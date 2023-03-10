@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ethers } from 'ethers';
+import { ethers, Wallet } from 'ethers';
 
 @Injectable()
 export class AppService {
@@ -38,5 +38,25 @@ export class AppService {
 
   getBallotContractAddress(): string {
     return this.ballotContract.address;
+  }
+
+  async requestTokens(address: string, amount: number): Promise<string> {
+    const privateKey = this.configService.get<string>('PRIVATE_KEY');
+
+    if (!privateKey) {
+      throw new InternalServerErrorException('Wrong server configuration');
+    }
+
+    const signer = new Wallet(
+      this.configService.get<string>('PRIVATE_KEY'),
+      this.provider,
+    );
+
+    const tx = await this.tokenContract
+      .connect(signer)
+      .mint(address, ethers.utils.parseEther(amount.toString()));
+    const txReceipt = await tx.wait();
+
+    return txReceipt.hash;
   }
 }
