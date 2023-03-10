@@ -1,14 +1,42 @@
 import { Injectable } from '@nestjs/common';
-
-import myTokenJson from 'contract/artifacts/contracts/ERC20Votes.sol/MyToken.json';
+import { ConfigService } from '@nestjs/config';
+import { ethers } from 'ethers';
 
 @Injectable()
 export class AppService {
-  async getHello(): Promise<string> {
-    console.log(
-      await import('contract/artifacts/contracts/ERC20Votes.sol/MyToken.json'),
+  provider: ethers.providers.Provider;
+  tokenContract: ethers.Contract;
+  ballotContract: ethers.Contract;
+
+  constructor(private configService: ConfigService) {
+    this.provider = ethers.getDefaultProvider('goerli');
+
+    import('contract/artifacts/contracts/ERC20Votes.sol/MyToken.json').then(
+      (tokenJson) => {
+        this.tokenContract = new ethers.Contract(
+          this.configService.get<string>('TOKEN_ADDRESS'),
+          tokenJson.abi,
+          this.provider,
+        );
+      },
     );
 
-    return JSON.stringify(myTokenJson.abi);
+    import(
+      'contract/artifacts/contracts/TokenizedBallot.sol/TokenizedBallot.json'
+    ).then((tokenJson) => {
+      this.ballotContract = new ethers.Contract(
+        this.configService.get<string>('BALLOT_ADDRESS'),
+        tokenJson.abi,
+        this.provider,
+      );
+    });
+  }
+
+  getTokenContractAddress(): string {
+    return this.tokenContract.address;
+  }
+
+  getBallotContractAddress(): string {
+    return this.ballotContract.address;
   }
 }
