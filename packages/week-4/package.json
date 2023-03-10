@@ -6,5 +6,8 @@
     "packages/*",
     "apps/*",
     "docs/*"
-  ]
+  ],
+  "dependencies": {
+    "ethers": "^5.7.2"
+  }
 }

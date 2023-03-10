@@ -4,11 +4,15 @@ import useMetamask from './hooks/useMetamask';
 import './App.css';
 
 function App() {
-  const [status, address, handleConnect] = useMetamask();
+  const [{ status, address, balance }, handleConnect] = useMetamask();
 
   return (
     <div className="App">
-      <p>Connected to address: {address}</p>
+      {status === 'connected' && (
+        <p>
+          Connected to address: {address} with balance {balance} ETH
+        </p>
+      )}
       <ConnectWalletBtn onClick={handleConnect} status={status}>
         Connect Wallet
       </ConnectWalletBtn>
