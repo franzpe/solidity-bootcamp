@@ -9,7 +9,10 @@ export class AppService {
   ballotContract: ethers.Contract;
 
   constructor(private configService: ConfigService) {
-    this.provider = ethers.getDefaultProvider('goerli');
+    this.provider = new ethers.providers.AlchemyProvider(
+      'goerli',
+      this.configService.get<string>('ALCHEMY_API_KEY'),
+    );
 
     import('contract/artifacts/contracts/ERC20Votes.sol/MyToken.json').then(
       (tokenJson) => {
