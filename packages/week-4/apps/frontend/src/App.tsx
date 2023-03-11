@@ -1,25 +1,59 @@
 import axios from 'axios';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import ConnectWalletBtn from './components/ConnectWalletBtn';
 import useMetamask from './hooks/useMetamask';
 
 import './App.css';
+import { ethers } from 'ethers';
 
 function App() {
   const [
-    { status, address, balance, tokenBalance, tokenContract, provider, votingPower },
+    {
+      status,
+      address,
+      balance,
+      tokenBalance,
+      tokenContract,
+      provider,
+      votingPower,
+      ballotAddress,
+      ballotContract,
+    },
     { handleConnect, getTokenBalance, getVotingPower },
   ] = useMetamask();
+  const [proposals, setProposals] = useState<string[]>([]);
   const [requestedTokens, setRequestedTokens] = useState<number>(2);
   const [delegateTo, setDelegateTo] = useState<string>('');
   const [isDelegating, setIsDelegating] = useState<boolean>(false);
+
+  const [vote, setVote] = useState<{ proposal: number; amount: string }>({ proposal: 0, amount: '2' });
+  const [isVoting, setIsVoting] = useState(false);
+  const [ballotVotingPower, setBallotVotingPower] = useState<string>('');
 
   const { isLoading, isSuccess, isError, mutateAsync } = useMutation(
     (body: { amount: number; address: string }) => {
       return axios.post('http://localhost:3001/token/request-tokens', body);
     },
   );
+
+  useEffect(() => {
+    if (ballotContract && status === 'connected') {
+      getProposals();
+      getBallotVotingPower();
+    }
+  }, [status]);
+
+  const getProposals = async () => {
+    const proposalsLength = await ballotContract!.proposalsLength();
+    const proposalsTemp: string[] = [];
+
+    for (let i = 0; i < proposalsLength; i++) {
+      proposalsTemp.push(ethers.utils.parseBytes32String((await ballotContract!.proposals(i)).name));
+    }
+
+    setProposals(proposalsTemp);
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,6 +62,11 @@ function App() {
       getTokenBalance(address);
       getVotingPower(address);
     });
+  };
+
+  const getBallotVotingPower = async () => {
+    const ballotVotingPower = await ballotContract!.votingPower(address);
+    setBallotVotingPower(ethers.utils.formatEther(ballotVotingPower));
   };
 
   const handleDelegateSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -42,14 +81,29 @@ function App() {
     setIsDelegating(false);
   };
 
+  const handleVoteSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    setIsVoting(true);
+    const signer = provider!.getSigner();
+    const tx = await ballotContract!.connect(signer).vote(vote.proposal, ethers.utils.parseEther(vote.amount));
+    const txReceipt = await tx.wait();
+    setIsVoting(false);
+
+    getBallotVotingPower();
+
+    console.log(txReceipt);
+  };
+
   return (
     <div className="App">
       <header>
         <ConnectWalletBtn onClick={handleConnect} status={status} />
       </header>
-      <main>
-        {status === 'connected' && (
-          <div>
+      {status === 'connected' && (
+        <main>
+          <section>
+            <h4>Wallet</h4>
             <p>Connected to address: {address}</p>
             <p>Balance: {balance} ETH</p>
             <p>Balance: {tokenBalance} MTK</p>
@@ -75,9 +129,43 @@ function App() {
               />
               <button disabled={isDelegating}>{!isDelegating ? 'Delegate' : 'Delegating...'} </button>
             </form>
-          </div>
-        )}
-      </main>
+          </section>
+          <section>
+            <h4>Ballot </h4>
+            <p>Address: {ballotAddress}</p>
+            <ul>
+              {proposals.map((p, idx) => (
+                <li key={p}>
+                  {idx} - {p}
+                </li>
+              ))}
+            </ul>
+            <form onSubmit={handleVoteSubmit}>
+              <p>You have {ballotVotingPower} voting power left for this current ballot</p>
+              <p>Vote:</p>
+              <input
+                type="number"
+                placeholder="Proposal number"
+                min={0}
+                max={proposals.length}
+                step={1}
+                value={vote.proposal}
+                onChange={e => setVote(v => ({ ...v, proposal: Number(e.target.value) }))}
+              />
+              <input
+                type="number"
+                min={2}
+                step={1}
+                max={Number(votingPower)}
+                placeholder="Number of votes"
+                value={vote.amount}
+                onChange={e => setVote(v => ({ ...v, amount: e.target.value }))}
+              />
+              <button disabled={isVoting}>{!isVoting ? 'Vote' : 'Voting...'}</button>
+            </form>
+          </section>
+        </main>
+      )}
     </div>
   );
 }

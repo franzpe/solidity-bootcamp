@@ -13,23 +13,40 @@ const useMetamask = () => {
   const [balance, setBalance] = useState<string | undefined>('');
   const [tokenBalance, setTokenBalance] = useState<number | undefined>();
   const [tokenContract, setTokenContract] = useState<ethers.Contract | undefined>();
+  const [ballotContract, setBallotContract] = useState<ethers.Contract | undefined>();
   const [provider, setProvider] = useState<ethers.providers.Web3Provider | undefined>();
 
   const { data: tokenAddress } = useQuery('token-contract-address', () =>
     axios.get('http://localhost:3001/token/contract-address').then(res => res.data),
   );
 
+  const { data: ballotAddress } = useQuery('ballot-contract-address', () =>
+    axios.get('http://localhost:3001/ballot/contract-address').then(res => res.data),
+  );
+
   useEffect(() => {
-    if (tokenAddress) {
+    const provider = new ethers.providers.Web3Provider(ethereum, 'any');
+    setProvider(provider);
+  }, []);
+
+  useEffect(() => {
+    if (!tokenContract && tokenAddress && provider) {
       import('contract/artifacts/contracts/ERC20Votes.sol/MyToken.json').then(tokenJson => {
         const provider = new ethers.providers.Web3Provider(ethereum, 'any');
         const contract = new ethers.Contract(tokenAddress, tokenJson.abi, provider);
-
-        setProvider(provider);
         setTokenContract(contract);
       });
     }
-  }, [tokenAddress]);
+  }, [provider, tokenAddress]);
+
+  useEffect(() => {
+    if (!ballotContract && ballotAddress && provider) {
+      import('contract/artifacts/contracts/TokenizedBallot.sol/TokenizedBallot.json').then(ballotJson => {
+        const contract = new ethers.Contract(ballotAddress, ballotJson.abi, provider);
+        setBallotContract(contract);
+      });
+    }
+  }, [provider, ballotAddress]);
 
   useEffect(() => {
     if (ethereum) {
@@ -85,15 +102,6 @@ const useMetamask = () => {
     setTokenBalance(undefined);
   };
 
-  const delegateVotes = async (toAddress: string) => {
-    if (provider && tokenContract) {
-      const signer = provider.getSigner();
-      const tx = await tokenContract.connect(signer).delegateVotes(toAddress);
-      const txReceipt = tx.wait();
-      console.log(txReceipt);
-    }
-  };
-
   const getBalance = async (accAddress: string) => {
     const balance = await ethereum.request({
       method: 'eth_getBalance',
@@ -118,7 +126,18 @@ const useMetamask = () => {
   };
 
   return [
-    { status, address, tokenAddress, tokenContract, balance, tokenBalance, provider, votingPower },
+    {
+      status,
+      address,
+      tokenAddress,
+      tokenContract,
+      ballotContract,
+      balance,
+      tokenBalance,
+      provider,
+      votingPower,
+      ballotAddress,
+    },
     { handleConnect, getTokenBalance, getVotingPower },
   ] as const;
 };

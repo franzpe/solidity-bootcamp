@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 
 import { task } from 'hardhat/config';
-import { Ballot__factory } from '../../typechain-types';
+import { TokenizedBallot__factory } from '../../typechain-types';
 
 dotenv.config();
 
@@ -41,7 +41,7 @@ const deployTask = task(
       console.log(`Proposal N. ${index + 1}: ${element}`);
     });
 
-    const ballotContractFactory = new Ballot__factory(signer);
+    const ballotContractFactory = new TokenizedBallot__factory(signer);
 
     console.log('Deploying contract ...');
 
