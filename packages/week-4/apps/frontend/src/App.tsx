@@ -1,11 +1,15 @@
 import axios from 'axios';
+import { ethers } from 'ethers';
 import { FormEvent, useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
+import './App.css';
 import ConnectWalletBtn from './components/ConnectWalletBtn';
 import useMetamask from './hooks/useMetamask';
 
-import './App.css';
-import { ethers } from 'ethers';
+type Proposal = {
+  name: string;
+  voteCount: number;
+};
 
 function App() {
   const [
@@ -22,13 +26,15 @@ function App() {
     },
     { handleConnect, getTokenBalance, getVotingPower },
   ] = useMetamask();
-  const [proposals, setProposals] = useState<string[]>([]);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
   const [requestedTokens, setRequestedTokens] = useState<number>(2);
   const [delegateTo, setDelegateTo] = useState<string>('');
   const [isDelegating, setIsDelegating] = useState<boolean>(false);
 
   const [vote, setVote] = useState<{ proposal: number; amount: string }>({ proposal: 0, amount: '2' });
   const [isVoting, setIsVoting] = useState(false);
+  const [winningProposal, setWinningProposal] = useState<number | undefined>();
+  const [showResults, setShowResults] = useState(false);
   const [ballotVotingPower, setBallotVotingPower] = useState<string>('');
 
   const { isLoading, isSuccess, isError, mutateAsync } = useMutation(
@@ -46,10 +52,14 @@ function App() {
 
   const getProposals = async () => {
     const proposalsLength = await ballotContract!.proposalsLength();
-    const proposalsTemp: string[] = [];
+    const proposalsTemp: Proposal[] = [];
 
     for (let i = 0; i < proposalsLength; i++) {
-      proposalsTemp.push(ethers.utils.parseBytes32String((await ballotContract!.proposals(i)).name));
+      const proposal = await ballotContract!.proposals(i);
+      proposalsTemp.push({
+        name: ethers.utils.parseBytes32String(proposal.name),
+        voteCount: Number(ethers.utils.formatEther(proposal.voteCount)),
+      });
     }
 
     setProposals(proposalsTemp);
@@ -95,6 +105,14 @@ function App() {
     console.log(txReceipt);
   };
 
+  const queryResults = async () => {
+    getProposals();
+
+    const winner = await ballotContract?.winningProposal();
+    setWinningProposal(Number(winner));
+    setShowResults(true);
+  };
+
   return (
     <div className="App">
       <header>
@@ -135,8 +153,8 @@ function App() {
             <p>Address: {ballotAddress}</p>
             <ul>
               {proposals.map((p, idx) => (
-                <li key={p}>
-                  {idx} - {p}
+                <li key={p.name}>
+                  {idx} - {p.name}
                 </li>
               ))}
             </ul>
@@ -163,6 +181,16 @@ function App() {
               />
               <button disabled={isVoting}>{!isVoting ? 'Vote' : 'Voting...'}</button>
             </form>
+            <button onClick={queryResults}>Results</button>
+            {showResults && (
+              <ul>
+                {proposals.map((p, idx) => (
+                  <li key={p.name} style={idx === winningProposal ? { fontWeight: 700 } : {}}>
+                    {p.name} - {p.voteCount} votes
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         </main>
       )}

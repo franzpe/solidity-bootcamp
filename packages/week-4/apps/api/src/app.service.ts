@@ -1,12 +1,14 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ethers, Wallet } from 'ethers';
+import { BigNumber, ethers, Wallet } from 'ethers';
+import { Vote } from './model/vote.model';
 
 @Injectable()
 export class AppService {
   provider: ethers.providers.Provider;
   tokenContract: ethers.Contract;
   ballotContract: ethers.Contract;
+  recentVotes: Vote[];
 
   constructor(private configService: ConfigService) {
     this.provider = new ethers.providers.AlchemyProvider(
@@ -41,6 +43,11 @@ export class AppService {
 
   getBallotContractAddress(): string {
     return this.ballotContract.address;
+  }
+
+  async castVote(vote: Vote): Promise<BigNumber> {
+    // TODO
+    return ethers.utils.parseEther('10');
   }
 
   async requestTokens(address: string, amount: number): Promise<string> {
