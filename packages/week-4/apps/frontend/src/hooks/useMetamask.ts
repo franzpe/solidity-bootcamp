@@ -9,10 +9,11 @@ const ethereum: any | undefined = (window as any).ethereum;
 const useMetamask = () => {
   const [status, setStatus] = useState<WalletConnectionStatus>('disconnected');
   const [address, setAddress] = useState<string>('');
-  const [balance, setBalance] = useState<number | undefined>();
+  const [votingPower, setVotingPower] = useState<string>('');
+  const [balance, setBalance] = useState<string | undefined>('');
   const [tokenBalance, setTokenBalance] = useState<number | undefined>();
   const [tokenContract, setTokenContract] = useState<ethers.Contract | undefined>();
-  const [provider, setProvider] = useState<ethers.providers.AlchemyProvider | undefined>();
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider | undefined>();
 
   const { data: tokenAddress } = useQuery('token-contract-address', () =>
     axios.get('http://localhost:3001/token/contract-address').then(res => res.data),
@@ -21,7 +22,7 @@ const useMetamask = () => {
   useEffect(() => {
     if (tokenAddress) {
       import('contract/artifacts/contracts/ERC20Votes.sol/MyToken.json').then(tokenJson => {
-        const provider = new ethers.providers.AlchemyProvider('goerli', process.env.REACT_APP_ALCHEMY_API_KEY);
+        const provider = new ethers.providers.Web3Provider(ethereum, 'any');
         const contract = new ethers.Contract(tokenAddress, tokenJson.abi, provider);
 
         setProvider(provider);
@@ -44,18 +45,14 @@ const useMetamask = () => {
           const res = await ethereum.request({ method: 'eth_requestAccounts' });
           const address = res[0];
 
-          setAddress(address);
-          getBalance(address);
-          getTokenBalance(address);
+          updateProps(address);
           setStatus('connected');
         }
 
         break;
       }
       case 'connected': {
-        setAddress('');
-        setBalance(undefined);
-        setTokenBalance(undefined);
+        clearProps();
         setStatus('disconnected');
         break;
       }
@@ -65,13 +62,45 @@ const useMetamask = () => {
     }
   };
 
+  const handleAccountsChanged = async (newAddress: object) => {
+    updateProps(newAddress.toString());
+  };
+
+  const handleChainChanged = () => {
+    clearProps();
+    setStatus('disconnected');
+  };
+
+  const updateProps = (address: string) => {
+    getBalance(address);
+    getTokenBalance(address);
+    getVotingPower(address);
+    setAddress(address);
+  };
+
+  const clearProps = () => {
+    setAddress('');
+    setBalance(undefined);
+    setVotingPower('');
+    setTokenBalance(undefined);
+  };
+
+  const delegateVotes = async (toAddress: string) => {
+    if (provider && tokenContract) {
+      const signer = provider.getSigner();
+      const tx = await tokenContract.connect(signer).delegateVotes(toAddress);
+      const txReceipt = tx.wait();
+      console.log(txReceipt);
+    }
+  };
+
   const getBalance = async (accAddress: string) => {
     const balance = await ethereum.request({
       method: 'eth_getBalance',
       params: [accAddress, 'latest'],
     });
 
-    setBalance(Number(ethers.utils.formatEther(balance)));
+    setBalance(ethers.utils.formatEther(balance));
   };
 
   const getTokenBalance = async (accAddress: string) => {
@@ -81,20 +110,16 @@ const useMetamask = () => {
     }
   };
 
-  const handleAccountsChanged = async (newAddress: object) => {
-    getBalance(newAddress.toString());
-    getTokenBalance(newAddress.toString());
-    setAddress(newAddress.toString());
-  };
-
-  const handleChainChanged = () => {
-    setAddress('');
-    setStatus('disconnected');
+  const getVotingPower = async (address: string) => {
+    if (tokenContract) {
+      const votingPower = ethers.utils.formatEther(await tokenContract.getVotes(address));
+      setVotingPower(votingPower);
+    }
   };
 
   return [
-    { status, address, tokenAddress, tokenContract, balance, tokenBalance, provider },
-    { handleConnect, getTokenBalance },
+    { status, address, tokenAddress, tokenContract, balance, tokenBalance, provider, votingPower },
+    { handleConnect, getTokenBalance, getVotingPower },
   ] as const;
 };
 

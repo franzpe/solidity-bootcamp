@@ -5,7 +5,7 @@ Tokenized Ballot dApp divided in 3 parts consiting of frontend, api & contracts.
 **Requirements**:
 
 - [x] mint tokens from API
-- [ ] delegate voting power
+- [x] delegate voting power
 - [ ] cast votes
 - [ ] query results
 
