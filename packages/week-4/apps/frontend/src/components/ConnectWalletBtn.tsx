@@ -1,3 +1,4 @@
+import { Button } from '@nextui-org/react';
 import { HTMLAttributes } from 'react';
 
 export type WalletConnectionStatus = 'connected' | 'connecting' | 'disconnected';
@@ -14,9 +15,9 @@ const statusTextMap: Record<WalletConnectionStatus, string> = {
 
 const ConnectWalletBtn = ({ status, onClick, ...restProps }: ConnectWalletBtnProps) => {
   return (
-    <button onClick={onClick} {...restProps}>
+    <Button shadow color="gradient" onClick={onClick} size="md" {...restProps}>
       {statusTextMap[status]}
-    </button>
+    </Button>
   );
 };
 

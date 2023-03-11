@@ -1,3 +1,4 @@
+import { Badge, Button, Card, Container, Grid, Input, Spacer, Text } from '@nextui-org/react';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { FormEvent, useEffect, useState } from 'react';
@@ -67,6 +68,7 @@ function App() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('called');
 
     mutateAsync({ address, amount: requestedTokens }).then(() => {
       getTokenBalance(address);
@@ -114,87 +116,203 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <header>
-        <ConnectWalletBtn onClick={handleConnect} status={status} />
-      </header>
-      {status === 'connected' && (
-        <main>
-          <section>
-            <h4>Wallet</h4>
-            <p>Connected to address: {address}</p>
-            <p>Balance: {balance} ETH</p>
-            <p>Balance: {tokenBalance} MTK</p>
-            <p>Voting power: {votingPower}</p>
-            <form onSubmit={handleSubmit}>
-              <input
-                type="number"
-                min={2}
-                value={requestedTokens}
-                onChange={e => setRequestedTokens(Number(e.currentTarget.value))}
-              />
-              <button disabled={isLoading}>{!isLoading ? 'Request tokens' : 'Processing request'}</button>
-              {isSuccess && <p>Tokens have been minted successfully</p>}
-              {isError && <p>Error occured! yaiks :(</p>}
-            </form>
-            <form onSubmit={handleDelegateSubmit}>
-              <p>Delegate votes to:</p>
-              <input
-                type="string"
-                placeholder="address"
-                value={delegateTo}
-                onChange={e => setDelegateTo(e.currentTarget.value)}
-              />
-              <button disabled={isDelegating}>{!isDelegating ? 'Delegate' : 'Delegating...'} </button>
-            </form>
-          </section>
-          <section>
-            <h4>Ballot </h4>
-            <p>Address: {ballotAddress}</p>
-            <ul>
-              {proposals.map((p, idx) => (
-                <li key={p.name}>
-                  {idx} - {p.name}
-                </li>
-              ))}
-            </ul>
-            <form onSubmit={handleVoteSubmit}>
-              <p>You have {ballotVotingPower} voting power left for this current ballot</p>
-              <p>Vote:</p>
-              <input
-                type="number"
-                placeholder="Proposal number"
-                min={0}
-                max={proposals.length}
-                step={1}
-                value={vote.proposal}
-                onChange={e => setVote(v => ({ ...v, proposal: Number(e.target.value) }))}
-              />
-              <input
-                type="number"
-                min={2}
-                step={1}
-                max={Number(votingPower)}
-                placeholder="Number of votes"
-                value={vote.amount}
-                onChange={e => setVote(v => ({ ...v, amount: e.target.value }))}
-              />
-              <button disabled={isVoting}>{!isVoting ? 'Vote' : 'Voting...'}</button>
-            </form>
-            <button onClick={queryResults}>Results</button>
-            {showResults && (
-              <ul>
+    <Container display="flex" justify="center" alignItems="center">
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Text h1>Counter-Strike Ballot</Text>
+        <Text size="$xl">Vote for best Counter-Strike edition of all times</Text>
+        <Spacer y={2} />
+        <Grid.Container gap={2}>
+          <Grid>
+            <Card css={{ mw: '500px' }}>
+              <Card.Header>
+                <Text b>Ballot Information</Text>
+              </Card.Header>
+              <Card.Divider />
+
+              <Card.Body>
+                <Text size="$md" css={{ marginBottom: '12px' }}>
+                  Address: <Text i>{ballotAddress}</Text>
+                </Text>
+                <Text>You can vote for:</Text>
                 {proposals.map((p, idx) => (
-                  <li key={p.name} style={idx === winningProposal ? { fontWeight: 700 } : {}}>
-                    {p.name} - {p.voteCount} votes
-                  </li>
+                  <Text i key={p.name}>
+                    {p.name} ({idx})
+                  </Text>
                 ))}
-              </ul>
+              </Card.Body>
+            </Card>
+          </Grid>
+          <Grid>
+            <Card css={{ mw: '500px' }}>
+              <Card.Header css={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Text b>Wallet&nbsp;</Text>
+                {status === 'connected' && (
+                  <Text b color="success">
+                    {' '}
+                    connected
+                  </Text>
+                )}
+              </Card.Header>
+              <Card.Divider />
+              {status === 'connected' && (
+                <>
+                  <Card.Body>
+                    <Text>
+                      Connected to address: <Text i>{address}</Text>
+                    </Text>
+                    <Text>
+                      Balance: <Text i>{balance} ETH</Text>
+                    </Text>
+                    <Text>
+                      Balance: <Text i>{tokenBalance} MTK</Text>
+                    </Text>
+                    <Text>
+                      Voting power: <Text i>{ballotVotingPower}</Text>
+                    </Text>
+                  </Card.Body>
+                  <Card.Divider />
+                </>
+              )}
+              <Card.Footer>
+                <ConnectWalletBtn onClick={handleConnect} status={status} />
+              </Card.Footer>
+            </Card>
+          </Grid>
+        </Grid.Container>
+        <Spacer y={1} />
+        {status === 'connected' && (
+          <Card>
+            <Card.Header>
+              <Text b>Actions</Text>
+            </Card.Header>
+            <Card.Divider />
+            <Card.Body>
+              <form onSubmit={handleSubmit}>
+                <Grid.Container gap={2}>
+                  <Grid>
+                    <Input
+                      type="number"
+                      labelRight="MTK"
+                      min={2}
+                      label="Request Tokens"
+                      value={requestedTokens}
+                      color={isSuccess ? 'success' : isError ? 'error' : ''}
+                      onChange={(e: React.FormEvent<HTMLInputElement>) =>
+                        setRequestedTokens(Number(e.currentTarget.value))
+                      }
+                      helperText={
+                        isSuccess
+                          ? 'Tokens have been minted successfully'
+                          : isError
+                          ? 'Error occured! yaiks :('
+                          : ''
+                      }
+                    />
+                  </Grid>
+                  <Grid css={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Button size="md" disabled={isLoading} type="submit">
+                      {!isLoading ? 'Request tokens' : 'Processing request...'}
+                    </Button>
+                  </Grid>
+                </Grid.Container>
+              </form>
+              <form onSubmit={handleDelegateSubmit}>
+                <Grid.Container gap={2}>
+                  <Grid>
+                    <Input
+                      type="string"
+                      labelLeft="address"
+                      min={2}
+                      label="Delegate votes to:"
+                      onChange={(e: React.FormEvent<HTMLInputElement>) => setDelegateTo(e.currentTarget.value)}
+                      helperText={
+                        isSuccess
+                          ? 'Tokens have been minted successfully'
+                          : isError
+                          ? 'Error occured! yaiks :('
+                          : ''
+                      }
+                      value={delegateTo}
+                    />
+                  </Grid>
+                  <Grid css={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Button type="submit" disabled={isDelegating}>
+                      {!isDelegating ? 'Delegate' : 'Delegating...'}
+                    </Button>
+                  </Grid>
+                </Grid.Container>
+              </form>
+
+              <form onSubmit={handleVoteSubmit}>
+                <Grid.Container gap={2}>
+                  <Grid>
+                    <Input
+                      type="number"
+                      label="vote"
+                      placeholder="Proposal number"
+                      min={0}
+                      fullWidth
+                      labelLeft="Proposal"
+                      max={proposals.length}
+                      step={1}
+                      value={vote.proposal}
+                      onChange={(e: React.FormEvent<HTMLInputElement>) =>
+                        setVote(v => ({ ...v, proposal: Number(e.currentTarget.value) }))
+                      }
+                    />
+                  </Grid>
+                  <Grid css={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Input
+                      type="number"
+                      min={2}
+                      step={1}
+                      max={Number(votingPower)}
+                      labelLeft="Amount"
+                      placeholder="Number of votes"
+                      value={vote.amount}
+                      onChange={(e: React.FormEvent<HTMLInputElement>) =>
+                        setVote(v => ({ ...v, amount: e.currentTarget.value }))
+                      }
+                    />
+                  </Grid>
+                  <Grid css={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Button type="submit" disabled={isVoting}>
+                      {!isVoting ? 'Vote' : 'Voting...'}
+                    </Button>
+                  </Grid>
+                  <Grid css={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Button bordered color="gradient" onClick={queryResults} shadow>
+                      Results
+                    </Button>
+                  </Grid>
+                </Grid.Container>
+              </form>
+            </Card.Body>
+            {showResults && (
+              <>
+                <Card.Divider />
+                <Card.Footer>
+                  <Grid.Container gap={1}>
+                    {proposals.map((p, idx) => (
+                      <Grid>
+                        <Badge
+                          size="md"
+                          key={p.name}
+                          color={idx === winningProposal ? 'success' : undefined}
+                          css={{ paddingleft: '16px', paddingRight: '16px' }}
+                        >
+                          {p.name} - {p.voteCount} votes
+                        </Badge>
+                      </Grid>
+                    ))}
+                  </Grid.Container>
+                </Card.Footer>
+              </>
             )}
-          </section>
-        </main>
-      )}
-    </div>
+          </Card>
+        )}
+      </div>
+    </Container>
   );
 }
 

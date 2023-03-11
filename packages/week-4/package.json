@@ -11,6 +11,7 @@
     "docs/*"
   ],
   "dependencies": {
+    "@nextui-org/react": "^1.0.0-beta.12",
     "ethers": "^5.7.2"
   },
   "devDependencies": {
