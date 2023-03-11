@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useMutation } from 'react-query';
 import ConnectWalletBtn from './components/ConnectWalletBtn';
 import useMetamask from './hooks/useMetamask';
@@ -7,7 +7,7 @@ import useMetamask from './hooks/useMetamask';
 import './App.css';
 
 function App() {
-  const [{ status, address, balance, tokenBalance }, handleConnect] = useMetamask();
+  const [{ status, address, balance, tokenBalance }, { handleConnect, getTokenBalance }] = useMetamask();
   const [requestedTokens, setRequestedTokens] = useState<number>(2);
 
   const { isLoading, isSuccess, isError, mutateAsync } = useMutation(
@@ -19,7 +19,7 @@ function App() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    mutateAsync({ address, amount: requestedTokens });
+    mutateAsync({ address, amount: requestedTokens }).then(() => getTokenBalance(address));
   };
 
   return (

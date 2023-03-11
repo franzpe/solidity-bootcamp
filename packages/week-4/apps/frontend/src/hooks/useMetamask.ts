@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ethers, getDefaultProvider } from 'ethers';
+import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { WalletConnectionStatus } from '../components/ConnectWalletBtn';
@@ -12,6 +12,7 @@ const useMetamask = () => {
   const [balance, setBalance] = useState<number | undefined>();
   const [tokenBalance, setTokenBalance] = useState<number | undefined>();
   const [tokenContract, setTokenContract] = useState<ethers.Contract | undefined>();
+  const [provider, setProvider] = useState<ethers.providers.AlchemyProvider | undefined>();
 
   const { data: tokenAddress } = useQuery('token-contract-address', () =>
     axios.get('http://localhost:3001/token/contract-address').then(res => res.data),
@@ -20,11 +21,10 @@ const useMetamask = () => {
   useEffect(() => {
     if (tokenAddress) {
       import('contract/artifacts/contracts/ERC20Votes.sol/MyToken.json').then(tokenJson => {
-        const contract = new ethers.Contract(
-          tokenAddress,
-          tokenJson.abi,
-          new ethers.providers.AlchemyProvider('goerli', process.env.REACT_APP_ALCHEMY_API_KEY),
-        );
+        const provider = new ethers.providers.AlchemyProvider('goerli', process.env.REACT_APP_ALCHEMY_API_KEY);
+        const contract = new ethers.Contract(tokenAddress, tokenJson.abi, provider);
+
+        setProvider(provider);
         setTokenContract(contract);
       });
     }
@@ -92,7 +92,10 @@ const useMetamask = () => {
     setStatus('disconnected');
   };
 
-  return [{ status, address, tokenAddress, tokenContract, balance, tokenBalance }, handleConnect] as const;
+  return [
+    { status, address, tokenAddress, tokenContract, balance, tokenBalance, provider },
+    { handleConnect, getTokenBalance },
+  ] as const;
 };
 
 export default useMetamask;
