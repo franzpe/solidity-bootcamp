@@ -49,11 +49,11 @@ const useMetamask = () => {
   }, [provider, ballotAddress]);
 
   useEffect(() => {
-    if (ethereum) {
+    if (ethereum && tokenContract && ballotContract) {
       ethereum.on('accountsChanged', handleAccountsChanged);
       ethereum.on('chainChanged', handleChainChanged);
     }
-  }, []);
+  }, [tokenContract, ballotContract]);
 
   const handleConnect = async () => {
     switch (status) {
@@ -112,8 +112,10 @@ const useMetamask = () => {
   };
 
   const getTokenBalance = async (accAddress: string) => {
+    console.log(tokenContract);
     if (tokenContract) {
       const tokenBalanceBN = await tokenContract.balanceOf(accAddress);
+      console.log(tokenBalanceBN);
       setTokenBalance(Number(ethers.utils.formatEther(tokenBalanceBN)));
     }
   };

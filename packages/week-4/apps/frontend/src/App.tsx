@@ -45,11 +45,14 @@ function App() {
   );
 
   useEffect(() => {
-    if (ballotContract && status === 'connected') {
+    if (ballotContract) {
       getProposals();
-      getBallotVotingPower();
+
+      if (status === 'connected') {
+        getBallotVotingPower();
+      }
     }
-  }, [status]);
+  }, [status, ballotContract]);
 
   const getProposals = async () => {
     const proposalsLength = await ballotContract!.proposalsLength();
@@ -294,10 +297,9 @@ function App() {
                 <Card.Footer>
                   <Grid.Container gap={1}>
                     {proposals.map((p, idx) => (
-                      <Grid>
+                      <Grid key={p.name}>
                         <Badge
                           size="md"
-                          key={p.name}
                           color={idx === winningProposal ? 'success' : undefined}
                           css={{ paddingleft: '16px', paddingRight: '16px' }}
                         >
