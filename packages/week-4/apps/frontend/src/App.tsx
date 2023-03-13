@@ -15,6 +15,7 @@ type Proposal = {
 function App() {
   const [
     {
+      signerAddress,
       status,
       address,
       balance,
@@ -39,20 +40,23 @@ function App() {
   const [ballotVotingPower, setBallotVotingPower] = useState<string>('');
 
   const { isLoading, isSuccess, isError, mutateAsync } = useMutation(
-    (body: { amount: number; address: string }) => {
-      return axios.post('http://localhost:3001/token/request-tokens', body);
+    async (body: { amount: number; address: string }) => {
+      console.log("REQUESTING TOKENS");
+      // return axios.post('http://localhost:3001/token/request-tokens', body);
+
+      console.log("Going to pop wallet now to pay gas...");
+      let tx = await tokenContract.mint(signerAddress, 2);
+      // Wait for the transaction to be mined
+      const receipt = await tx.wait();
     },
   );
 
   useEffect(() => {
-    if (ballotContract) {
+    if (ballotContract && status === 'connected') {
       getProposals();
-
-      if (status === 'connected') {
-        getBallotVotingPower();
-      }
+      getBallotVotingPower();
     }
-  }, [status, ballotContract]);
+  }, [status]);
 
   const getProposals = async () => {
     const proposalsLength = await ballotContract!.proposalsLength();
@@ -297,9 +301,10 @@ function App() {
                 <Card.Footer>
                   <Grid.Container gap={1}>
                     {proposals.map((p, idx) => (
-                      <Grid key={p.name}>
+                      <Grid>
                         <Badge
                           size="md"
+                          key={p.name}
                           color={idx === winningProposal ? 'success' : undefined}
                           css={{ paddingleft: '16px', paddingRight: '16px' }}
                         >

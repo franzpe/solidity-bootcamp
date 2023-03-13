@@ -7,6 +7,7 @@ import { WalletConnectionStatus } from '../components/ConnectWalletBtn';
 const ethereum: any | undefined = (window as any).ethereum;
 
 const useMetamask = () => {
+  const [signerAddress, setSignerAddress] = useState<string | undefined>();
   const [status, setStatus] = useState<WalletConnectionStatus>('disconnected');
   const [address, setAddress] = useState<string>('');
   const [votingPower, setVotingPower] = useState<string>('');
@@ -31,9 +32,14 @@ const useMetamask = () => {
 
   useEffect(() => {
     if (!tokenContract && tokenAddress && provider) {
-      import('contract/artifacts/contracts/ERC20Votes.sol/MyToken.json').then(tokenJson => {
+      import('contract/artifacts/contracts/ERC20Votes.sol/MyToken.json').then(async tokenJson => {
         const provider = new ethers.providers.Web3Provider(ethereum, 'any');
-        const contract = new ethers.Contract(tokenAddress, tokenJson.abi, provider);
+        // const contract = new ethers.Contract(tokenAddress, tokenJson.abi, provider);
+				const signer = provider.getSigner();
+        const signerAddr = await signer.getAddress();
+        setSignerAddress(signerAddr);
+        console.log("signerAddr", typeof(signerAddr))
+				const contract = new ethers.Contract(tokenAddress, tokenJson.abi, signer);
         setTokenContract(contract);
       });
     }
@@ -49,11 +55,11 @@ const useMetamask = () => {
   }, [provider, ballotAddress]);
 
   useEffect(() => {
-    if (ethereum && tokenContract && ballotContract) {
+    if (ethereum) {
       ethereum.on('accountsChanged', handleAccountsChanged);
       ethereum.on('chainChanged', handleChainChanged);
     }
-  }, [tokenContract, ballotContract]);
+  }, []);
 
   const handleConnect = async () => {
     switch (status) {
@@ -112,10 +118,8 @@ const useMetamask = () => {
   };
 
   const getTokenBalance = async (accAddress: string) => {
-    console.log(tokenContract);
     if (tokenContract) {
       const tokenBalanceBN = await tokenContract.balanceOf(accAddress);
-      console.log(tokenBalanceBN);
       setTokenBalance(Number(ethers.utils.formatEther(tokenBalanceBN)));
     }
   };
@@ -129,6 +133,7 @@ const useMetamask = () => {
 
   return [
     {
+      signerAddress,
       status,
       address,
       tokenAddress,
