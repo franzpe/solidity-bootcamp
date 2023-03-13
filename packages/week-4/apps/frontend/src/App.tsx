@@ -15,6 +15,7 @@ type Proposal = {
 function App() {
   const [
     {
+      signerAddress,
       status,
       address,
       balance,
@@ -39,8 +40,14 @@ function App() {
   const [ballotVotingPower, setBallotVotingPower] = useState<string>('');
 
   const { isLoading, isSuccess, isError, mutateAsync } = useMutation(
-    (body: { amount: number; address: string }) => {
-      return axios.post('http://localhost:3001/token/request-tokens', body);
+    async (body: { amount: number; address: string }) => {
+      console.log("REQUESTING TOKENS");
+      // return axios.post('http://localhost:3001/token/request-tokens', body);
+
+      console.log("Going to pop wallet now to pay gas...");
+      let tx = await tokenContract.mint(signerAddress, 2);
+      // Wait for the transaction to be mined
+      const receipt = await tx.wait();
     },
   );
 
