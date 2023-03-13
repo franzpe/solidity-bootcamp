@@ -3,12 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { ethers, Wallet } from 'ethers';
 
 @Injectable()
-export class BaseService {
+export abstract class BaseService {
   protected provider: ethers.providers.Provider;
   protected tokenContract: ethers.Contract;
   protected ballotContract: ethers.Contract;
 
-  constructor(private configService: ConfigService) {
+  constructor(protected configService: ConfigService) {
     this.provider = this.createProvider();
 
     this.buildTokenContract().then(
@@ -42,6 +42,19 @@ export class BaseService {
       this.configService.get<string>('TOKEN_ADDRESS'),
       tokenJson.abi,
       signer,
+    );
+  }
+
+  protected async buildCustomBallotContract(
+    provider: ethers.providers.Provider = this.provider,
+  ) {
+    const ballotJson = await import(
+      'contract/artifacts/contracts/TokenizedBallot.sol/TokenizedBallot.json'
+    );
+    return new ethers.Contract(
+      this.configService.get<string>('BALLOT_ADDRESS'),
+      ballotJson.abi,
+      provider,
     );
   }
 
