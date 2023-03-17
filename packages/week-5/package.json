@@ -10,11 +10,7 @@
     "apps/*",
     "docs/*"
   ],
-  "dependencies": {
-    "ethers": "^5.7.2"
-  },
   "devDependencies": {
-    "learna": "^1.0.1",
     "lerna": "^6.5.1",
     "typescript": "^4.9.5"
   }

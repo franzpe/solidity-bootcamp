@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0lottery.sol
 pragma solidity >=0.7.0 <0.9.0;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
@@ -125,7 +125,7 @@ contract Lottery is Ownable {
     /// @notice Returns a random number calculated from the previous block randao
     /// @dev This only works after The Merge
     function getRandomNumber() public view returns (uint256 randomNumber) {
-        randomNumber = block.prevrandao;
+        randomNumber = block.difficulty;
     }
 
     /// @notice Withdraws `amount` from that accounts's prize pool
