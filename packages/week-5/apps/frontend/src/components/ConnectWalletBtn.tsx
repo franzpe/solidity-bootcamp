@@ -5,12 +5,12 @@ export type WalletConnectionStatus = 'connected' | 'connecting' | 'disconnected'
 
 type ConnectWalletBtnProps = {
   status: WalletConnectionStatus;
-} & HTMLAttributes<HTMLButtonElement>;
+} & Omit<HTMLAttributes<Element>, 'color'>;
 
 const statusTextMap: Record<WalletConnectionStatus, string> = {
   connected: 'Disconnect',
   connecting: 'Connecting...',
-  disconnected: 'Connect Wallet',
+  disconnected: 'Connect Wallet'
 };
 
 const ConnectWalletBtn = ({ status, onClick, ...restProps }: ConnectWalletBtnProps) => {

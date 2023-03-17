@@ -1,8 +1,8 @@
-import { NextUIProvider } from '@nextui-org/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import App from './App';
+import { createTheme, NextUIProvider } from '@nextui-org/react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
@@ -10,14 +10,21 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 const queryClient = new QueryClient({ defaultOptions: {} });
 
+const darkTheme = createTheme({
+  type: 'dark',
+  theme: {}
+});
+
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <NextUIProvider>
-        <App />
+      <NextUIProvider theme={darkTheme}>
+        <NextUIProvider>
+          <App />
+        </NextUIProvider>
       </NextUIProvider>
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

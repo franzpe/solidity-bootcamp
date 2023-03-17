@@ -1,17 +1,5 @@
 {
   "name": "week-5",
   "version": "1.0.0",
-  "private": "true",
-  "scripts": {
-    "start": "lerna run --parallel start"
-  },
-  "workspaces": [
-    "packages/*",
-    "apps/*",
-    "docs/*"
-  ],
-  "devDependencies": {
-    "lerna": "^6.5.1",
-    "typescript": "^4.9.5"
-  }
+  "private": "true"
 }
