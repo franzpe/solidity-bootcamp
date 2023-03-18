@@ -239,7 +239,7 @@ async function checkState() {
 
 async function openBets(duration: string) {
   const currentBlock = await ethers.provider.getBlock('latest');
-  const tx = await contract.openBets(currentBlock.timestamp + Number(duration));
+  const tx = await contract.openBets(currentBlock.timestamp + Number(duration), { gasLimit: 100000 });
   const receipt = await tx.wait();
   console.log(`Bets opened (${receipt.transactionHash})`);
 }

@@ -12,20 +12,20 @@ const AccountInfo = ({ tokenContract }: Props) => {
   const [info, setInfo] = useState({ balance: 0, tokenBalance: 0 });
 
   useEffect(() => {
-    if (address && provider) {
-      provider!.getBalance(address).then((balanceBn: BigNumber) => {
+    if (provider) {
+      provider!.getBalance(address!).then((balanceBn: BigNumber) => {
         setInfo(prev => ({ ...prev, balance: Number(ethers.utils.formatEther(balanceBn)) }));
       });
     }
-  }, [address, provider]);
+  }, [provider]);
 
   useEffect(() => {
-    if (address && tokenContract) {
+    if (tokenContract) {
       tokenContract.balanceOf(address).then((balanceBn: BigNumber) => {
         setInfo(prev => ({ ...prev, tokenBalance: Number(ethers.utils.formatEther(balanceBn)) }));
       });
     }
-  }, [address, tokenContract]);
+  }, [tokenContract]);
 
   return (
     <>

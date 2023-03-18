@@ -6,9 +6,9 @@
 
 - [ ] create frontend for lottery contract
   - [x] Create wallet by importing the private key or mnemonic - [Metamask used]
-  - [ ] Display state of the auction
+  - [x] Display state of the auction
   - [ ] Display Countdown
-  - [ ] Display balance eth, tokens
+  - [x] Display balance eth, tokens
   - [ ] Display prize
   - [ ] Buy tokens
   - [ ] Bet
