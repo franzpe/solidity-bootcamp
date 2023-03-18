@@ -7,7 +7,6 @@ function App() {
     <Layout>
       <Container display="flex" justify="center" alignItems="center">
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Text h1>Lottery of the year</Text>
           <Spacer y={2} />
           <Grid.Container gap={2}>
             {
