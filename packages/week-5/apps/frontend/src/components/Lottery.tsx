@@ -26,7 +26,7 @@ const Lottery = ({ lotteryContract }: Props) => {
 
   return (
     <div>
-      <h1>Dwight Schrute Lotter</h1>
+      <h1>Dwight Schrute Lottery</h1>
       <p>
         State:{' '}
         <Text i color={isOpen ? 'success' : 'error'}>
