@@ -1,44 +1,16 @@
-import { Container, Grid, Spacer, Text } from '@nextui-org/react';
+import { Container } from '@nextui-org/react';
 import './App.css';
+import AccountInfo from './components/AccountInfo';
 import { Layout } from './components/Layout';
+import useLottery from './hooks/useLottery';
 
 function App() {
+  const { tokenContract } = useLottery();
+
   return (
     <Layout>
-      <Container display="flex" justify="center" alignItems="center">
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Spacer y={2} />
-          <Grid.Container gap={2}>
-            {
-              // {            <Grid>
-              //               <Card css={{ mw: '500px' }}>
-              //                 <Card.Header css={{ display: 'flex', justifyContent: 'space-between' }}>
-              //                   <Text b>Wallet&nbsp;</Text>
-              //                   {status === 'connected' && (
-              //                     <Text b color="success">
-              //                       {' '}
-              //                       connected
-              //                     </Text>
-              //                   )}
-              //                 </Card.Header>
-              //                 <Card.Divider />
-              //                 {status === 'connected' && (
-              //                   <>
-              //                     <Card.Body>
-              //                       Connected to address: <Text i>{address}</Text>
-              //                     </Card.Body>
-              //                     <Card.Divider />
-              //                   </>
-              //                 )}
-              //                 <Card.Footer>
-              //                   <ConnectWalletBtn onClick={connect} status={status} />
-              //                 </Card.Footer>
-              //               </Card>
-              //             </Grid>
-            }
-          </Grid.Container>
-          <Spacer y={1} />
-        </div>
+      <Container>
+        <AccountInfo tokenContract={tokenContract} />
       </Container>
     </Layout>
   );

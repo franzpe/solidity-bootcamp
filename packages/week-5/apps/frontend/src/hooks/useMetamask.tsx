@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, Wallet } from 'ethers';
 import { useEffect, useState } from 'react';
 import { WalletConnectionStatus } from '../components/ConnectWalletBtn';
 
@@ -18,10 +18,12 @@ const useMetamask = (options?: Options) => {
    * Set metamask provider
    */
   useEffect(() => {
-    const provider = new ethers.providers.Web3Provider(ethereum, 'any');
-
-    setProvider(provider);
-  }, []);
+    if (status === 'connected') {
+      const provider = new ethers.providers.Web3Provider(ethereum, 'any');
+      provider.getBalance(address);
+      setProvider(provider);
+    }
+  }, [status]);
 
   /**
    * When user changes account or chain in metamask, invoke callback functions

@@ -14,7 +14,7 @@ let provider: InfuraProvider;
 
 const BET_PRICE = 1;
 const BET_FEE = 0.2;
-const TOKEN_RATIO = 1;
+const TOKEN_RATIO = 10000;
 
 async function main() {
   const rl = readline.createInterface({
@@ -76,6 +76,7 @@ async function initContracts(rl: readline.Interface) {
       const tokenAddress = await contract.paymentToken();
       const tokenFactory = new LotteryToken__factory();
       token = tokenFactory.attach(tokenAddress);
+      res();
     }
   });
 }
@@ -199,7 +200,7 @@ function menuOptions(rl: readline.Interface) {
           break;
         case 8:
           rl.question('What account (index) to use?\n', async index => {
-            await displayTokenBalance(index);
+            // await displayTokenBalance(index);
             rl.question('Burn how many tokens?\n', async amount => {
               try {
                 await burnTokens(index, amount);
@@ -260,7 +261,7 @@ async function buyTokens(index: string, amount: string) {
 async function displayTokenBalance(index: string) {
   const balanceBN = await token.balanceOf(accounts[Number(index)].address);
   const balance = ethers.utils.formatEther(balanceBN);
-  console.log(`The account of address ${accounts[Number(index)].address} has ${balance} LT0\n`);
+  console.log(`The account of address ${accounts[Number(index)]} has ${balance} LT0\n`);
 }
 
 async function bet(index: string, amount: string) {

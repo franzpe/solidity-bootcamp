@@ -5,7 +5,7 @@
 **Requirements**:
 
 - [ ] create frontend for lottery contract
-  - [ ] Create wallet by importing the private key or mnemonic
+  - [x] Create wallet by importing the private key or mnemonic - [Metamask used]
   - [ ] Display state of the auction
   - [ ] Display Countdown
   - [ ] Display balance eth, tokens
@@ -18,4 +18,4 @@
 
 Optional:
 
-- [ ] implement metamask wallet connection
+- [x] implement metamask wallet connection

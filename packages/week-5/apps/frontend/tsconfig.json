@@ -14,7 +14,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "build", "scripts", "acceptance-tests", "webpack", "jest"],
   "include": ["src"]

@@ -1,9 +1,9 @@
-import { Navbar, Button, Link, Text } from '@nextui-org/react';
-import useMetamask from '../hooks/useMetamask';
+import { Navbar, Text } from '@nextui-org/react';
+import { useMetamaskContext } from '../hooks/MetamaskContext';
 import ConnectWalletBtn from './ConnectWalletBtn';
 
 const Header = () => {
-  const { connect, status } = useMetamask();
+  const { connect, status } = useMetamaskContext();
 
   return (
     <Navbar isCompact variant="floating" isBordered css={{ padding: '5px 0 10px' }}>

@@ -5,6 +5,7 @@ import App from './App';
 import { createTheme, NextUIProvider } from '@nextui-org/react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import { MetamaskProvider } from './hooks/MetamaskContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -20,7 +21,9 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <NextUIProvider theme={darkTheme}>
         <NextUIProvider>
-          <App />
+          <MetamaskProvider>
+            <App />
+          </MetamaskProvider>
         </NextUIProvider>
       </NextUIProvider>
     </QueryClientProvider>
