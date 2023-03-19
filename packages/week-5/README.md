@@ -14,7 +14,7 @@
   - [x] Open / Close lottery
   - [ ] Bet
   - [ ] Withdraw tokens
-  - [ ] Burn tokens
+  - [x] Burn tokens
 
 Optional:
 

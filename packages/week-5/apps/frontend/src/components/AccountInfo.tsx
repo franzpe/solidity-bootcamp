@@ -13,6 +13,7 @@ const AccountInfo = ({ tokenContract, lotteryContract }: Props) => {
   const { address, provider, status } = useMetamaskContext();
   const [info, setInfo] = useState({ balance: 0, tokenBalance: 0, ratio: 0, buyTokens: 0 });
   const [isBuying, setIsBuying] = useState(false);
+  const [isBurning, setIsBurning] = useState(false);
 
   useEffect(() => {
     if (provider) {
@@ -46,7 +47,8 @@ const AccountInfo = ({ tokenContract, lotteryContract }: Props) => {
     lotteryContract!
       .connect(provider!.getSigner())
       .purchaseTokens({ value: ethers.utils.parseEther((info.buyTokens / info.ratio).toString()) })
-      .then(async () => {
+      .then(async (tx: any) => {
+        await tx.wait();
         toast.success('Purchase transaction successful');
 
         const [balanceBN, tokenBalanceBN] = await Promise.all([
@@ -62,6 +64,43 @@ const AccountInfo = ({ tokenContract, lotteryContract }: Props) => {
         }));
       })
       .finally(() => setIsBuying(false));
+  };
+
+  const handleBurn = async () => {
+    setIsBurning(true);
+
+    try {
+      const allowTx = await tokenContract!
+        .connect(provider!.getSigner())
+        .approve(lotteryContract!.address, ethers.constants.MaxUint256);
+      await allowTx.wait();
+
+      const tx = await lotteryContract!
+        .connect(provider!.getSigner())
+        .returnTokens(ethers.utils.parseEther(info.buyTokens.toString()));
+
+      await tx.wait();
+
+      const [balanceBN, tokenBalanceBN] = await Promise.all([
+        provider!.getBalance(address!),
+        tokenContract!.balanceOf(address)
+      ]);
+
+      setInfo(prev => ({
+        ...prev,
+        balance: Number(ethers.utils.formatEther(balanceBN)),
+        tokenBalance: Number(ethers.utils.formatEther(tokenBalanceBN)),
+        buyTokens: 0
+      }));
+
+      toast.success('burn transaction successful');
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsBurning(false);
+    }
+
+    console.log('burn');
   };
 
   return (
@@ -103,6 +142,12 @@ const AccountInfo = ({ tokenContract, lotteryContract }: Props) => {
               <Grid>
                 <Button color="secondary" disabled={isBuying} auto type="submit">
                   {!isBuying ? 'Buy tokens' : <Loading type="spinner" color="currentColor" size="sm" />}
+                </Button>
+              </Grid>
+              <Grid css={{ marginLeft: '16px' }}>
+                <Button color="secondary" ghost disabled={isBurning} auto type="button" onClick={handleBurn}>
+                  {' '}
+                  {!isBurning ? 'Burn tokens' : <Loading type="spinner" color="currentColor" size="sm" />}
                 </Button>
               </Grid>
             </Grid.Container>
