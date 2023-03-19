@@ -7,14 +7,15 @@
 - [ ] create frontend for lottery contract
   - [x] Create wallet by importing the private key or mnemonic - [Metamask used]
   - [x] Display state of the auction
-  - [ ] Display Countdown
+  - [x] Display Countdown
   - [x] Display balance eth, tokens
-  - [ ] Display prize
-  - [ ] Buy tokens
+  - [x] Display prize
+  - [x] Buy tokens
+  - [x] Burn tokens
+  - [x] Open / Close lottery
   - [ ] Bet
-  - [ ] Close lottery
   - [ ] Withdraw tokens
-  - [ ] Burn tokens
+  - [ ] Display winner
 
 Optional:
 

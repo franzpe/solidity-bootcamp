@@ -20,7 +20,6 @@ const useLottery = (options?: Options) => {
       );
 
       lotteryContract.paymentToken().then((tokenAddress: string) => {
-        console.log(tokenAddress);
         const tokenContract = new ethers.Contract(tokenAddress, lotteryTokenJson.abi, provider);
         setTokenContract(tokenContract);
       });

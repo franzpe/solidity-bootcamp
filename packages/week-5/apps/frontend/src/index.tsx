@@ -1,11 +1,11 @@
+import { createTheme, NextUIProvider } from '@nextui-org/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import App from './App';
-import { createTheme, NextUIProvider } from '@nextui-org/react';
+import { MetamaskProvider } from './hooks/MetamaskContext';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { MetamaskProvider } from './hooks/MetamaskContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
