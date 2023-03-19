@@ -8,7 +8,12 @@ type Props = {
 };
 
 const Lottery = ({ lotteryContract }: Props) => {
-  const [{ isOpen, closingTime }, setInfo] = useState({ isOpen: false, closingTime: new Date() });
+  const [{ isOpen, closingTime, prizePool, ratio }, setInfo] = useState({
+    isOpen: false,
+    closingTime: new Date(),
+    prizePool: 0,
+    ratio: 0
+  });
   const [days, hours, minutes, seconds] = useCountdown(closingTime);
 
   useEffect(() => {
@@ -22,6 +27,12 @@ const Lottery = ({ lotteryContract }: Props) => {
       lotteryContract.betsClosingTime().then((closingTimeBN: BigNumber) => {
         const closingTime = new Date(closingTimeBN.toNumber() * 1000);
         setInfo(prev => ({ ...prev, closingTime: closingTime }));
+      });
+      lotteryContract.prizePool().then((prizePoolBN: BigNumber) => {
+        setInfo(prev => ({ ...prev, prizePool: prizePoolBN.toNumber() }));
+      });
+      lotteryContract.purchaseRatio().then((ratioBN: BigNumber) => {
+        setInfo(prev => ({ ...prev, ratio: ratioBN.toNumber() }));
       });
     }
   }, [isOpen]);
@@ -50,6 +61,12 @@ const Lottery = ({ lotteryContract }: Props) => {
                   {days} days, {hours} hours, {minutes} minutes, {seconds} seconds
                 </>
               )}
+            </Text>
+          </p>
+          <p>
+            Prize pool:{' '}
+            <Text i>
+              {prizePool} LT0 - {prizePool / ratio} ETH
             </Text>
           </p>
         </>

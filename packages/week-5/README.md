@@ -9,7 +9,7 @@
   - [x] Display state of the auction
   - [x] Display Countdown
   - [x] Display balance eth, tokens
-  - [ ] Display prize
+  - [x] Display prize
   - [ ] Buy tokens
   - [ ] Bet
   - [ ] Close lottery
