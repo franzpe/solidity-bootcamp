@@ -39,7 +39,7 @@ const AccountInfo = ({ tokenContract, lotteryContract }: Props) => {
     }
   }, [lotteryContract]);
 
-  const handleForm = (e: FormEvent<HTMLFormElement>) => {
+  const handleBuy = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setIsBuying(true);
@@ -125,7 +125,7 @@ const AccountInfo = ({ tokenContract, lotteryContract }: Props) => {
           <p>
             ETH/LT0 Ratio: <Text i>{info.ratio} LT0</Text>
           </p>
-          <form onSubmit={handleForm}>
+          <form onSubmit={handleBuy}>
             <Grid.Container css={{ marginTop: '8px' }}>
               <Grid css={{ marginRight: '24px' }}>
                 <Input
