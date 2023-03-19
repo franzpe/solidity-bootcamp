@@ -6,10 +6,15 @@ const useCountdown = (targetDate: Date) => {
   const [countDown, setCountDown] = useState(countDownDate - new Date().getTime());
 
   useEffect(() => {
-    if (countDown <= 0) return;
-
+    console.log(countDownDate);
+    console.log(countDown);
     const interval = setInterval(() => {
       setCountDown(countDownDate - new Date().getTime());
+
+      if (countDownDate - new Date().getTime() <= 0) {
+        clearInterval(interval);
+        return;
+      }
     }, 1000);
 
     return () => clearInterval(interval);

@@ -11,8 +11,8 @@
   - [x] Display balance eth, tokens
   - [x] Display prize
   - [x] Buy tokens
+  - [x] Open / Close lottery
   - [ ] Bet
-  - [ ] Close lottery
   - [ ] Withdraw tokens
   - [ ] Burn tokens
 
