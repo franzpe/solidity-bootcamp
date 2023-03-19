@@ -10,7 +10,7 @@
   - [x] Display Countdown
   - [x] Display balance eth, tokens
   - [x] Display prize
-  - [ ] Buy tokens
+  - [x] Buy tokens
   - [ ] Bet
   - [ ] Close lottery
   - [ ] Withdraw tokens
