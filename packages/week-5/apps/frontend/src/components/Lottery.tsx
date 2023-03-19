@@ -1,6 +1,7 @@
 import { Text } from '@nextui-org/react';
 import { BigNumber, Contract } from 'ethers';
 import { useEffect, useState } from 'react';
+import useCountdown from '../hooks/useCountdown';
 
 type Props = {
   lotteryContract: Contract;
@@ -8,6 +9,7 @@ type Props = {
 
 const Lottery = ({ lotteryContract }: Props) => {
   const [{ isOpen, closingTime }, setInfo] = useState({ isOpen: false, closingTime: new Date() });
+  const [days, hours, minutes, seconds] = useCountdown(closingTime);
 
   useEffect(() => {
     lotteryContract.betsOpen().then((state: boolean) => {
@@ -34,9 +36,23 @@ const Lottery = ({ lotteryContract }: Props) => {
         </Text>
       </p>
       {isOpen && (
-        <p>
-          Closing time: <Text i>{closingTime.toLocaleString()}</Text>
-        </p>
+        <>
+          <p>
+            Bets closing time: <Text i>{closingTime.toLocaleString()}</Text>
+          </p>
+          <p>
+            Countdown:{' '}
+            <Text i>
+              {days + hours + minutes + seconds <= 0 ? (
+                'Bets closed'
+              ) : (
+                <>
+                  {days} days, {hours} hours, {minutes} minutes, {seconds} seconds
+                </>
+              )}
+            </Text>
+          </p>
+        </>
       )}
     </div>
   );
