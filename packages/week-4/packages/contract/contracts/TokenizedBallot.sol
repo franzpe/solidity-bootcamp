@@ -18,6 +18,8 @@ contract TokenizedBallot {
 
   Proposal[] public proposals;
 
+  event Vote(address indexed from, uint256 proposal, uint256 amount);
+
   constructor(
     bytes32[] memory proposalNames,
     address _tokenContract,
@@ -35,6 +37,7 @@ contract TokenizedBallot {
     require(votingPower(msg.sender) >= amount);
     votingPowerSpent[msg.sender] += amount;
     proposals[proposal].voteCount += amount;
+    emit Vote(msg.sender, proposal, amount);
   }
 
   function proposalsLength() public view returns (uint) {
