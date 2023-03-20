@@ -11,17 +11,20 @@ type Props = {
 };
 
 const Lottery = ({ lotteryContract, tokenContract }: Props) => {
-  const { provider } = useMetamaskContext();
-  const [{ isLoaded, isOpen, closingTime, prizePool, ratio }, setInfo] = useState({
+  const { provider, address } = useMetamaskContext();
+  const [{ isLoaded, isOpen, closingTime, prizePool, ratio, prize, prizeLoaded }, setInfo] = useState({
     isOpen: false,
     closingTime: new Date(),
     prizePool: 0,
     ratio: 0,
-    isLoaded: false
+    isLoaded: false,
+    prize: 0,
+    prizeLoaded: false
   });
 
   const [openingDuration, setOpeningDuration] = useState('');
   const [isOpening, setIsOpening] = useState(false);
+  const [isClaiming, setIsClaiming] = useState(false);
   const [days, hours, minutes, seconds] = useCountdown(closingTime);
   const [betForm, setBetForm] = useState({ value: 0, isLoading: false });
 
@@ -105,6 +108,37 @@ const Lottery = ({ lotteryContract, tokenContract }: Props) => {
     }
   };
 
+  const handleShowPrize = async () => {
+    try {
+      const prizeBN = await lotteryContract.prize(address);
+      const prize = Number(ethers.utils.formatEther(prizeBN));
+      setInfo(prev => ({ ...prev, prize: prize, prizeLoaded: true }));
+
+      if (prize > 0) {
+        toast.success("Congratulations! You've won!");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error('Yaiks! Error occured');
+    }
+  };
+
+  const handleClaimPrize = async () => {
+    try {
+      setIsClaiming(false);
+      const tx = await lotteryContract
+        .connect(provider!.getSigner())
+        .prizeWithdraw(ethers.utils.parseEther(prize.toString()));
+      await tx.wait();
+      toast.success('Withdrawal complete');
+    } catch (err) {
+      console.log(err);
+      toast.error('Yaiks! Error occured');
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
   const countdownElapsed = days + hours + minutes + seconds <= 0;
 
   const canBet = !countdownElapsed && isOpen;
@@ -167,7 +201,7 @@ const Lottery = ({ lotteryContract, tokenContract }: Props) => {
           </p>
 
           {canBet && (
-            <Row css={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+            <Row css={{ display: 'flex', alignItems: 'center', marginTop: '8px', marginBottom: '8px' }}>
               <form onSubmit={handleBet}>
                 <Input
                   bordered
@@ -193,6 +227,21 @@ const Lottery = ({ lotteryContract, tokenContract }: Props) => {
           )}
         </>
       )}
+      <Row css={{ display: 'flex', alignItems: 'center', marginBottom: '8px', marginTop: '8px' }}>
+        <Button css={{ marginRight: '16px' }} onClick={handleShowPrize}>
+          Show prize
+        </Button>
+        {prizeLoaded && (
+          <span>
+            You've won:<Text i> {prize} LT0 </Text>
+          </span>
+        )}
+        {prize > 0 && (
+          <Button css={{ marginLeft: '12px' }} auto size="xs" onClick={handleClaimPrize} disabled={isClaiming}>
+            {!isClaiming ? 'Claim' : <Loading type="spinner" color="currentColor" size="xs" />}
+          </Button>
+        )}
+      </Row>
     </div>
   );
 };
