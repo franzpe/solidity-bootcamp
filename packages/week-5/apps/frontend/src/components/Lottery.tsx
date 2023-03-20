@@ -1,15 +1,16 @@
 import { Button, Input, Loading, Row, Text } from '@nextui-org/react';
-import { BigNumber, Contract, providers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { BigNumber, Contract, ethers } from 'ethers';
+import { FormEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useMetamaskContext } from '../hooks/MetamaskContext';
 import useCountdown from '../hooks/useCountdown';
 
 type Props = {
   lotteryContract: Contract;
+  tokenContract: Contract;
 };
 
-const Lottery = ({ lotteryContract }: Props) => {
+const Lottery = ({ lotteryContract, tokenContract }: Props) => {
   const { provider } = useMetamaskContext();
   const [{ isLoaded, isOpen, closingTime, prizePool, ratio }, setInfo] = useState({
     isOpen: false,
@@ -22,6 +23,7 @@ const Lottery = ({ lotteryContract }: Props) => {
   const [openingDuration, setOpeningDuration] = useState('');
   const [isOpening, setIsOpening] = useState(false);
   const [days, hours, minutes, seconds] = useCountdown(closingTime);
+  const [betForm, setBetForm] = useState({ value: 0, isLoading: false });
 
   useEffect(() => {
     lotteryContract.betsOpen().then((state: boolean) => {
@@ -36,7 +38,7 @@ const Lottery = ({ lotteryContract }: Props) => {
         setInfo(prev => ({ ...prev, closingTime: closingTime }));
       });
       lotteryContract.prizePool().then((prizePoolBN: BigNumber) => {
-        setInfo(prev => ({ ...prev, prizePool: prizePoolBN.toNumber() }));
+        setInfo(prev => ({ ...prev, prizePool: Number(ethers.utils.formatEther(prizePoolBN)) }));
       });
       lotteryContract.purchaseRatio().then((ratioBN: BigNumber) => {
         setInfo(prev => ({ ...prev, ratio: ratioBN.toNumber() }));
@@ -71,6 +73,35 @@ const Lottery = ({ lotteryContract }: Props) => {
           toast.success('Lottery opened');
         })
         .catch((err: any) => toast.error(err));
+    }
+  };
+
+  const handleBet = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      setBetForm({ ...betForm, isLoading: true });
+
+      const signer = provider!.getSigner();
+
+      const allowTx = await tokenContract
+        .connect(signer)
+        .approve(lotteryContract.address, ethers.constants.MaxUint256);
+      await allowTx.wait();
+
+      const tx = await lotteryContract.connect(signer).betMany(betForm.value);
+      await tx.wait();
+
+      toast.success('Bet succesfully placed');
+
+      lotteryContract.prizePool().then((prizePoolBN: BigNumber) => {
+        setInfo(prev => ({ ...prev, prizePool: prizePoolBN.toNumber() }));
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error('Yaiks! Error occured');
+    } finally {
+      setBetForm({ ...betForm, isLoading: false });
     }
   };
 
@@ -134,7 +165,32 @@ const Lottery = ({ lotteryContract }: Props) => {
               {prizePool} LT0 - {prizePool / ratio} ETH
             </Text>
           </p>
-          <form></form>
+
+          {canBet && (
+            <Row css={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+              <form onSubmit={handleBet}>
+                <Input
+                  bordered
+                  labelRight="TK0"
+                  placeholder="Bet"
+                  aria-label="Bet"
+                  type="number"
+                  value={betForm.value}
+                  onChange={e => setBetForm(prev => ({ ...prev, value: Number(e.target.value) }))}
+                />
+                <Button
+                  color="secondary"
+                  auto
+                  size="md"
+                  disabled={betForm.isLoading}
+                  type="submit"
+                  css={{ display: 'inline-block', marginLeft: '12px' }}
+                >
+                  {!betForm.isLoading ? 'Place bet' : <Loading type="spinner" color="currentColor" size="md" />}
+                </Button>
+              </form>
+            </Row>
+          )}
         </>
       )}
     </div>

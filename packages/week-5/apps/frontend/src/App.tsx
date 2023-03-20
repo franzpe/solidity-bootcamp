@@ -27,7 +27,9 @@ function App() {
       />
       <Container>
         <AccountInfo tokenContract={tokenContract} lotteryContract={lotteryContract} />
-        {status === 'connected' && lotteryContract && <Lottery lotteryContract={lotteryContract} />}
+        {status === 'connected' && lotteryContract && (
+          <Lottery lotteryContract={lotteryContract} tokenContract={tokenContract!} />
+        )}
       </Container>
     </Layout>
   );

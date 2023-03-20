@@ -13,7 +13,7 @@
   - [x] Buy tokens
   - [x] Burn tokens
   - [x] Open / Close lottery
-  - [ ] Bet
+  - [x] Bet many
   - [ ] Withdraw tokens
   - [ ] Display winner
 
