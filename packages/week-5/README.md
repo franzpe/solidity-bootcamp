@@ -4,7 +4,7 @@
 
 **Requirements**:
 
-- [ ] create frontend for lottery contract
+- [x] create frontend for lottery contract
   - [x] Create wallet by importing the private key or mnemonic - [Metamask used]
   - [x] Display state of the auction
   - [x] Display Countdown
