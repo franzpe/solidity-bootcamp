@@ -2,10 +2,10 @@
 
 Techs
 
-- [ ] ERC20 - game token
-- [ ] ERC721 - NFT's game equipment
+- [ ] ERC1155 for FT and NFT's
 - [ ] IPFS - store NFT image
 - [ ] Websockets
+- [ ] Use wallet connection, Wagmi, Rainbowkit?
 
 ## GameItems - ERC1155
 
