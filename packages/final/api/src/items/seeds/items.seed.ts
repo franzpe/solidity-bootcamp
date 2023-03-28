@@ -1,7 +1,7 @@
-import { Command } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
+import { Command } from 'nestjs-command';
 import { ItemsService } from '../items.service';
-import { CreateItemDto } from '../dto/create-item.dto';
+import { items } from './items';
 
 @Injectable()
 export class ItemsSeed {
@@ -12,39 +12,7 @@ export class ItemsSeed {
     describe: 'create items',
   })
   async create() {
-    const dtos: CreateItemDto[] = [
-      {
-        name: "Poorman's knife",
-        damage: 2,
-        slot: 'weapon',
-        description: 'Super basic knife',
-        level: 1,
-        imgUri: '#',
-      },
-      {
-        name: 'Layered Tunic',
-        slot: 'chest',
-        description: 'Well worn chest',
-        level: 1,
-        imgUri: '#',
-      },
-      {
-        name: 'Gnarpline Leggins',
-        slot: 'legs',
-        description: 'Gnarpline Leggins',
-        level: 1,
-        imgUri: '#',
-      },
-      {
-        name: 'Nightscape Headband',
-        slot: 'head',
-        description: 'Headband',
-        level: 1,
-        imgUri: '#',
-      },
-    ];
-
-    await Promise.all(dtos.map((dto) => this.itemsService.create(dto)));
+    await Promise.all(items.map((dto) => this.itemsService.create(dto)));
 
     console.log('Items have been populated');
   }
