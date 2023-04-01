@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
 import { Command } from 'nestjs-command';
+import { Injectable } from '@nestjs/common';
 import { ItemsService } from '../items.service';
 import { items } from './items';
 
