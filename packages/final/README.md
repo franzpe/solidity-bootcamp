@@ -2,6 +2,7 @@
 
 ## Global Features
 
+- [x] App project scaffolded by create-web3-dapp
 - [ ] Create player & authentication
 
 ## Smart contract desired features (tests for every item):
