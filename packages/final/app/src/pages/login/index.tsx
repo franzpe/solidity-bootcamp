@@ -1,4 +1,5 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Image from 'next/image';
 import axios from 'axios';
 import { getCsrfToken, signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -75,19 +76,38 @@ const Login = () => {
   };
 
   return (
-    <div className="flex w-full h-full items-center justify-center">
-      {!isConnected && <ConnectButton label="Sign In"></ConnectButton>}
-      {isConnected && registerForm.shouldRegister && (
-        <form onSubmit={handleSubmitRegister}>
-          <label htmlFor="name">Nickname</label>
-          <input
-            id="name"
-            type="text"
-            onChange={e => setRegisterForm(prev => ({ ...prev, name: e.target.value }))}
-          />
-          <button>Register</button>
-        </form>
-      )}
+    <div className="flex w-full h-full items-center justify-center flex-col relative overflow-hidden">
+      <div className="flex flex-col items-start">
+        <header className="prose mb-8">
+          <h1 className="text-8xl">
+            Rogue <span className="text-gray-50">Mansion</span>
+          </h1>
+        </header>
+        <Image
+          className="absolute bottom-0 -right-52"
+          src="/rogue.png"
+          alt="Rogue image"
+          width={980}
+          height={800}
+        />
+        <main>
+          {!isConnected && <ConnectButton label="Play"></ConnectButton>}
+          {isConnected && registerForm.shouldRegister && (
+            <form className="flex flex-row items-end space-x-4" onSubmit={handleSubmitRegister}>
+              <div className="flex flex-col items-start space-y-4">
+                <label htmlFor="name">Your deadly name?</label>
+                <input
+                  id="name"
+                  type="text"
+                  className="input input-bordered"
+                  onChange={e => setRegisterForm(prev => ({ ...prev, name: e.target.value }))}
+                />
+              </div>
+              <button className="btn">Register</button>
+            </form>
+          )}
+        </main>
+      </div>
     </div>
   );
 };

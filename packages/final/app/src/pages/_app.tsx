@@ -17,7 +17,6 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
       <SessionProvider session={session} refetchInterval={0}>
         <RainbowKitSiweNextAuthProvider>
           <RainbowKitProvider
-            modalSize="compact"
             initialChain={process.env.NEXT_PUBLIC_DEFAULT_CHAIN as any}
             chains={chains}
             theme={darkTheme()}

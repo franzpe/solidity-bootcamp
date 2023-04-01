@@ -7,6 +7,7 @@
 
 - FE nextjs (typescript) - rainbowkit, wagmi
   - Authentication - next-auth, wagmi, siwe, @rainbow-me/rainbowkit-siwe-next-auth
+  - UI - Tailwind, DaisUI
 - BE - nestjs, mongodb
 
 ## Smart contract desired features (tests for every item):
