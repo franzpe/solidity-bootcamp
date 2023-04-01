@@ -1,24 +1,29 @@
-# Smart contract desired features (tests for every item):
+# Final project - PvP Game
+
+## Global Features
+
+- [ ] Create player & authentication
+
+## Smart contract desired features (tests for every item):
+
 - [ ] Implementation of ERC 1155 (mint FT: gold as currency, and NFT: 4 items - head, chest, legs, weapon)
-- [ ] Implementation Game Contract (Note: ERC115Holder), which should have the structure of the Game (frontend/backend): 
-mapping(address => User) users;
-mapping(sting => battle) battles;
-enum Seasons;
-struct Battle {
-  NFT: ,
-  gold_amount: ,
-}
-struct User {
-  seasons_participated:
-  battles_won:
-  gold_amount: 
-}
+- [ ] Implementation Game Contract (Note: ERC115Holder), which should have the structure of the Game (frontend/backend):
+      mapping(address => User) users;
+      mapping(sting => battle) battles;
+      enum Seasons;
+      struct Battle {
+      NFT: ,
+      gold_amount: ,
+      }
+      struct User {
+      seasons_participated:
+      battles_won:
+      gold_amount:
+      }
 - [ ] Rewards (FT gold and NFT items) randomization for winner
 - [ ] Season winner is decided based on number of wins
 - [ ] Season takes X amount of time: set by admin
 - [ ] Upgradability
-
-# Final project - PvP Game
 
 Techs
 
