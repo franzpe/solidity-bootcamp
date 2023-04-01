@@ -1,26 +1,18 @@
-import { HardhatUserConfig, task } from 'hardhat/config';
-import '@nomicfoundation/hardhat-toolbox';
+import { HardhatUserConfig, task } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox";
 
-task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
+task("accounts", "Prints the list", async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
 
   for (const account of accounts) {
-    console.log(`Address: ${account.address}, balance: ${await account.getBalance()}`);
+    console.log(account.address);
+    console.log(account.getBalance());
   }
-});
+})
 
 const config: HardhatUserConfig = {
-  solidity: {
-    version: '0.8.18',
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 10000,
-      },
-    },
-  },
-  networks: { hardhat: { hardfork: 'merge' } },
-  paths: { tests: 'tests' },
+  paths: { tests: "tests"},
+  solidity: "0.8.17",
 };
 
 export default config;
