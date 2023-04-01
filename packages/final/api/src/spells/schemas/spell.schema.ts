@@ -16,6 +16,9 @@ export class Spell {
 
   @Prop()
   baseDamage: number;
+
+  @Prop()
+  imageUri: string;
 }
 
 export const SpellSchema = SchemaFactory.createForClass(Spell);

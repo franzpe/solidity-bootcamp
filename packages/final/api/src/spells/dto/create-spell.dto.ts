@@ -12,4 +12,7 @@ export class CreateSpellDto {
 
   @ApiProperty()
   baseDamage: number;
+
+  @ApiProperty()
+  imageUri: string;
 }
