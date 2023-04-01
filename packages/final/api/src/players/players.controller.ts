@@ -14,7 +14,7 @@ export class PlayersController {
   }
 
   @Post('/register')
-  async register(@Body('address') dto: RegisterPlayerDto): Promise<Player> {
+  async register(@Body() dto: RegisterPlayerDto): Promise<Player> {
     return this.playerService.register(dto);
   }
 
