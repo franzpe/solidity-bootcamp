@@ -1,4 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { CreatePlayerDto } from './dtos/create-player.dto';
+import { RegisterPlayerDto } from './dtos/register-player';
 import { PlayersService } from './players.service';
 import { Player } from './schemas/player.schema';
 
@@ -7,8 +9,18 @@ export class PlayersController {
   constructor(private readonly playerService: PlayersService) {}
 
   @Post()
-  async create(@Body() dto: Player) {
+  async create(@Body() dto: CreatePlayerDto) {
     await this.playerService.create(dto);
+  }
+
+  @Post('/register')
+  async register(@Body('address') dto: RegisterPlayerDto): Promise<Player> {
+    return this.playerService.register(dto);
+  }
+
+  @Get('/check/:address')
+  async checkPlayer(@Param('address') address: string): Promise<boolean> {
+    return this.playerService.checkPlayer(address);
   }
 
   @Get()
@@ -16,9 +28,9 @@ export class PlayersController {
     return this.playerService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Player> {
-    return this.playerService.findOne(id);
+  @Get(':address')
+  async findOne(@Param('address') address: string): Promise<Player> {
+    return this.playerService.findOne(address);
   }
 
   @Delete(':id')

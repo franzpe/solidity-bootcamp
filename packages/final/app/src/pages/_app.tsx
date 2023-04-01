@@ -1,3 +1,4 @@
+import configureAxios from '@/libs/configureAxios';
 import { chains, wagmiClient } from '@/libs/wagmi';
 import '@/styles/globals.css';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
@@ -7,6 +8,8 @@ import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { WagmiConfig } from 'wagmi';
+
+configureAxios();
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps<{ session: Session }>) {
   return (

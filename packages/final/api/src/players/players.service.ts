@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CreatePlayerDto } from './dtos/create-player.dto';
+import { RegisterPlayerDto } from './dtos/register-player';
 import { Player, PlayerDocument } from './schemas/player.schema';
 
 @Injectable()
@@ -10,18 +12,29 @@ export class PlayersService {
     private readonly playerModel: Model<PlayerDocument>,
   ) {}
 
-  async create(dto: Player): Promise<Player> {
-    const Player = await this.playerModel.create(dto);
+  async create(dto: CreatePlayerDto): Promise<Player> {
+    const player = await this.playerModel.create(dto);
 
-    return Player;
+    return player;
+  }
+
+  async register(dto: RegisterPlayerDto): Promise<Player> {
+    const player = await this.create({
+      ...dto,
+      health: 50,
+      level: 1,
+      experience: 0,
+      items: [],
+    });
+    return player;
   }
 
   async findAll(): Promise<Player[]> {
     return this.playerModel.find().exec();
   }
 
-  async findOne(id: string): Promise<Player> {
-    return this.playerModel.findOne({ _id: id }).exec();
+  async findOne(address: string): Promise<Player> {
+    return this.playerModel.findOne({ address }).exec();
   }
 
   async delete(id: string) {
@@ -32,5 +45,11 @@ export class PlayersService {
 
   async deleteAll() {
     return this.playerModel.deleteMany({});
+  }
+
+  async checkPlayer(address: string): Promise<boolean> {
+    const player = await this.findOne(address);
+
+    return !!player;
   }
 }

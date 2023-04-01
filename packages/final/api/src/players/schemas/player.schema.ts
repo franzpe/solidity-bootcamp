@@ -6,6 +6,9 @@ export type PlayerDocument = HydratedDocument<Player>;
 
 @Schema()
 export class Player {
+  @Prop()
+  address: string;
+
   // Profile props
   @Prop()
   name: string;
