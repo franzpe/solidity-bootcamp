@@ -5,6 +5,10 @@
 - [x] App project scaffolded by create-web3-dapp
 - [ ] Create player & authentication
 
+- FE nextjs (typescript) - rainbowkit, wagmi
+  - Authentication - next-auth, wagmi, siwe, @rainbow-me/rainbowkit-siwe-next-auth
+- BE - nestjs, mongodb
+
 ## Smart contract desired features (tests for every item):
 
 - [ ] Implementation of ERC 1155 (mint FT: gold as currency, and NFT: 4 items - head, chest, legs, weapon)

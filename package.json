@@ -1,5 +1,10 @@
 {
   "author": "Frank Pobocek <frank@pobocek.com>",
   "licence": "MIT",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "@rainbow-me/rainbowkit-siwe-next-auth": "^0.1.8",
+    "ethers": "^5.5.1",
+    "siwe": "^2.1.3"
+  }
 }
