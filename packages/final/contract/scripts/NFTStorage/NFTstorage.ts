@@ -45,13 +45,17 @@ async function storeNFTdir(attrs: Attributes) {
     const DisclaimerStr: string = "Disclaimer: only for use by Team 8 as a Solidity Encode Club Bootcamp (Early, 2023) Final Project";
 
     var files = []
+    var counter: number = 0;
+    let images: Attributes = {"head": [], "chest": [], "legs": [], "weapon": []};
     for (let attr in attrs) {
         var ids: number[] = attrs[attr as keyof Attributes];
         for(let i=0; i < ids.length; i++){
+            counter += 1;
             let baseImageSrc: string = "./images/" + attr + "/base.jpg";
             let TextStr: string = String(ids[i]);
             var buffer = await printTextOnImageAndReturnBuffer(baseImageSrc, DisclaimerStr, TextStr);
-            var file = new File([buffer], "images/"+attr+"/"+path.basename(String(ids[i])+".jpg"));
+            var file = new File([buffer], "images/"+path.basename(String(counter)+".jpg"));
+            images[attr as keyof Attributes].push(counter);
             files.push(file);
         }
     }
@@ -61,7 +65,7 @@ async function storeNFTdir(attrs: Attributes) {
     const status = await client.status(cid);
     console.log("status:", status);
 
-    return {"CID": cid, "images": attrs};
+    return {"CID": cid, "images": images};
 }
 
 async function storeJSONNFTdir(attrs: Attributes) {
@@ -72,17 +76,21 @@ async function storeJSONNFTdir(attrs: Attributes) {
     const CIDdir = jsonParsed["CID"];
 
     var files = []
+    var counter: number = 0;
+    let metadata: Attributes = {"head": [], "chest": [], "legs": [], "weapon": []};
     for (let attr in attrs) {
         var ids: number[] = attrs[attr as keyof Attributes];
         for(let i=0; i < ids.length; i++){
+            counter += 1;
             var attrName = attr + " #" + String(ids[i])
             var content = {
                 "name": "NFT - " + attrName,
-                "description": attrName + " is a part of " + attr + " NFT collection with randomly generate strength parameter",
-                "image": "ipfs://"+CIDdir+"/images/"+attr+"/"+String(ids[i])+".jpg",
+                "description": attrName + " is a part of " + attr + " NFT collection with randomly generated strength parameter",
+                "image": "ipfs://"+CIDdir+"/images/"+String(counter)+".jpg",
                 "strength": String(Math.floor(Math.random() * 10)),
             };
-            var file = new File([JSON.stringify(content)], "metadata/"+attr+"/"+String(ids[i]), { type: "application/json" });
+            var file = new File([JSON.stringify(content)], "metadata/"+String(counter), { type: "application/json" });
+            metadata[attr as keyof Attributes].push(counter);
             files.push(file);
         }
     }
@@ -91,7 +99,7 @@ async function storeJSONNFTdir(attrs: Attributes) {
     const status = await client.status(cid);
     console.log("status:", status);
 
-    return {"CID": cid, "metadata": attrs};
+    return {"CID": cid, "metadata": metadata};
 }
 
 /**
@@ -109,18 +117,6 @@ async function main() {
         "weapon": generateRange(1,10)
     };
     console.log("Attributes:", attributes);
-
-    // for (let attr in attributes) {
-    //     // FILES IN A DIRECTORY:
-    //     const JsonStoreNFTdir: any = await storeNFTdir(attr, attributes[attr as keyof Attributes]);
-    //     console.log("NFT.Storage Files Directory CID:", JsonStoreNFTdir.CID);
-    //     fs.writeFileSync("./scripts/NFTStorage/JSONs/NftStorageFilesDir.json", JSON.stringify(JsonStoreNFTdir));
-
-    //     // JSON IN A DIRECTORY:
-    //     const JsonStoreJSONNFTdir: any = await storeJSONNFTdir(attr, attributes[attr as keyof Attributes]);
-    //     console.log("NFT.Storage Files Metadata CID:", JsonStoreJSONNFTdir.CID);
-    //     fs.writeFileSync("./scripts/NFTStorage/JSONs/NftStorageMetadataDir.json", JSON.stringify(JsonStoreJSONNFTdir));
-    // }
 
     // FILES IN A DIRECTORY:
     const JsonStoreNFTdir: any = await storeNFTdir(attributes);
