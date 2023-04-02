@@ -89,7 +89,7 @@ async function storeJSONNFTdir(attrs: Attributes) {
                 "image": "ipfs://"+CIDdir+"/images/"+String(counter)+".jpg",
                 "strength": String(Math.floor(Math.random() * 10)),
             };
-            var file = new File([JSON.stringify(content)], "metadata/"+String(counter), { type: "application/json" });
+            var file = new File([JSON.stringify(content)], "metadata/"+String(counter)+".json", { type: "application/json" });
             metadata[attr as keyof Attributes].push(counter);
             files.push(file);
         }

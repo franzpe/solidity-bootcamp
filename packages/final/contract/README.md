@@ -18,17 +18,27 @@ Run the following:
 `yarn run ts-node scripts/NFTStorage/NFTstorage.ts`
 Note: this requires NFT_STORAGE_KEY definition in .env.
 The script does the following:
-- envokes `scripts/NFTStorage/PrintOnImage.ts` which auto generates files for each attribute, using specifed range (currently set to 10 items per attribute) with an NFT number and Disclaimer printed on each attribute's base.jpg (stored as scripts/NFTStorage/images/attribute_name/base.jpg). Note: that the files are not saved but instead are kept in Buffer to avoid memory space usage.
-- a set of all image files for each attribute is then sent to NFT.Storage as a "directory" (not actual directory, but files kept in buffer), which generates a CID for the directory followed by a file name (i.e., `ipfs://CID/iamge_file_id_in_the_range_from_1_to_10.jpg`)
-- then metadata files (json files) are generated for each image file and kept in `scripts/NFTStorage/metadata/attribute_name`, the following is metadata format:
-{
+- envokes `scripts/NFTStorage/PrintOnImage.ts` which auto generates files for each attribute, using specifed range (currently set to 10 items per attribute) with an NFT number and Disclaimer printed on each attribute's base.jpg (stored as scripts/NFTStorage/images/attribute_name/base.jpg). Note: that the image files (and metadata files) are not saved but instead are kept in Buffer to avoid memory space usage.
+- a set of all image files is then sent to NFT.Storage as a "directory" (not actual directory, but files kept in buffer), which generates a CID for the directory followed by a file number + ".jpg" (i.e., `ipfs://CID/iamge_file_id.jpg`)
+- then metadata files (json files) are generated for each image file and kept in buffer, with the following as metadata format:
+`{
     "name": "NFT - " + attrName,
     "description": attrName + " is a part of " + attr + " NFT collection with randomly generate strength parameter",
-    "image": "ipfs://"+CIDdir+"/"+String(ids[i])+".jpg",
-    "strength": String(Math.floor(Math.random() * 10)),
-}
+    "image": "ipfs://"+CIDdir+"/"+String(counter)+".jpg",
+    "strength": String(Math.ceil(Math.random() * 10)),
+}`
 "image" field can be used to get access to stored file using IPFS
-- a set of all metadata files for each attribute is then sent to NFT.Storage as a "directory" (not actual directory, but files kept in buffer), which generates a CID for the directory followed by attribute name and a file name (i.e., `ipfs://CID/attribute_name/json_file_id_in_the_range_from_1_to_10`)
+- a set of all metadata files is then sent to NFT.Storage as a "directory" (not actual directory, but files kept in buffer), which generates a CID for the directory followed by a file name (i.e., `ipfs://CID/json_file_id_in_the_range_from_1_to_10`)
 
 ## Printing Disclaimer on downloaded images, also helps to get unique CID (in case an image has been already been used on IPFS)
 `yarn run ts-node scripts/NFTStorage/PrintOnImages.ts`
+
+# GameToken contract
+To run unit tests:
+`yarn hardhat test tests/GameTokens.ts`
+
+To run scripts:
+`yarn run ts-node scripts/contracts/GameTokens/deploy.ts`
+`yarn run ts-node scripts/contracts/GameTokens/assignMinterRole.ts`
+`yarn run ts-node scripts/contracts/GameTokens/mint.ts`
+`yarn run ts-node scripts/contracts/GameTokens/mintBatch.ts`
