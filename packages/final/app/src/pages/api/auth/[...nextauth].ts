@@ -38,6 +38,7 @@ export default async function auth(req: any, res: any) {
               id: siwe.address,
             };
           }
+
           return null;
         } catch (e) {
           return null;
@@ -61,20 +62,20 @@ export default async function auth(req: any, res: any) {
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-      async jwt({ token }) {
+      async jwt(x) {
         let player;
 
-        if (token?.sub) {
+        if (x.token?.sub) {
           try {
             // TODO provide access token that needs to be verified on game server
-            const { data } = await axios.get(`/players/me/${token.sub}`);
+            const { data } = await axios.get(`/players/me/${x.token.sub}`);
             player = data;
           } catch (err) {
             console.log('Player not found');
           }
         }
 
-        return { ...token, player };
+        return { ...x.token, player };
       },
       async session({ session, token }: { session: any; token: any }) {
         session.user = token.player;

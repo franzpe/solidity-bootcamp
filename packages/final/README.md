@@ -6,6 +6,14 @@
 - [x] Create player & authentication
 - [ ] Validate jwt token from next-auth in nest application
 - [x] Pull player info on Login
+- [ ] Lobby
+  - [ ] Join
+  - [ ] Leave
+  - [ ] Challenge
+  - [ ] Accept / reject challenge
+  - [ ] Pickpocket ?
+- [ ] Character View
+- [ ] Fight
 
 - FE nextjs (typescript) - rainbowkit, wagmi
   - Authentication - next-auth, wagmi, siwe, @rainbow-me/rainbowkit-siwe-next-auth

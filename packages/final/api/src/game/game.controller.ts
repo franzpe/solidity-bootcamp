@@ -15,7 +15,7 @@ export class GameController {
     return await this.gameService.leaveLobby(id);
   }
 
-  @Get('/lobby/players')
+  @Get('/lobby')
   async findAll(): Promise<any[]> {
     return this.gameService.findAllPlayersInLobby();
   }
