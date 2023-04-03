@@ -1,157 +1,105 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.0;
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 /// @title Game.
-contract Game {
-    // This declares a new complex type which will
-    // be used for variables later.
-    // It will represent a single voter.
-    struct Voter {
-        uint weight; // weight is accumulated by delegation
-        bool voted;  // if true, that person already voted
-        address delegate; // person delegated to
-        uint vote;   // index of the voted proposal
+contract Game is AccessControl {
+    using Counters for Counters.Counter;
+    Counters.Counter private _battleId;
+    Counters.Counter private _seasonId;
+    bytes32 public constant GAME_CONTROLLER_ROLE = keccak256("GAME_CONTROLLER_ROLE");
+
+    struct User {
+        // string nick;
+        uint256 joinedTime;
+        // uint256[] battles_pariticipated; // dynamic size, might wanna limit it for better storage management
+        // uint256[] battles_won; // dynamic size, might wanna limit it for better storage management
     }
 
-    // This is a type for a single proposal.
-    struct Proposal {
-        bytes32 name;   // short name (up to 32 bytes)
-        uint voteCount; // number of accumulated votes
+    struct Prize {
+        uint256 goldAmount;
+        uint256 nftId;
     }
 
-    address public chairperson;
+    struct Battle {
+        Prize prize;
+        uint256 startTime;  // UTC format timestamp
+        uint256 endTime;    // UTC format timestamp
+        address[2] players; // Note: setting 2 players for a battle
+        address winner;
+    }
 
-    // This declares a state variable that
-    // stores a `Voter` struct for each possible address.
-    mapping(address => Voter) public voters;
+    struct Season {
+        uint256 firstBattle;    // first Battle of a season
+        uint256 lastBattle;     // last Battle of a season
+        uint256 startTime;      // UTC format timestamp
+        uint256 endTime;        // UTC format timestamp
+    }
 
-    // A dynamically-sized array of `Proposal` structs.
-    Proposal[] public proposals;
+    mapping(address => User) public users;
+    mapping(uint256 => Battle) battles;
+    mapping(uint256 => Season) seasons;
 
     /// Create a new ballot to choose one of `proposalNames`.
-    constructor(bytes32[] memory proposalNames) {
-        chairperson = msg.sender;
-        voters[chairperson].weight = 1;
-
-        // For each of the provided proposal names,
-        // create a new proposal object and add it
-        // to the end of the array.
-        for (uint i = 0; i < proposalNames.length; i++) {
-            // `Proposal({...})` creates a temporary
-            // Proposal object and `proposals.push(...)`
-            // appends it to the end of `proposals`.
-            proposals.push(Proposal({
-                name: proposalNames[i],
-                voteCount: 0
-            }));
-        }
+    constructor() {
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(GAME_CONTROLLER_ROLE, msg.sender);
     }
 
-    // Give `voter` the right to vote on this ballot.
-    // May only be called by `chairperson`.
-    function giveRightToVote(address voter) external {
-        // If the first argument of `require` evaluates
-        // to `false`, execution terminates and all
-        // changes to the state and to Ether balances
-        // are reverted.
-        // This used to consume all gas in old EVM versions, but
-        // not anymore.
-        // It is often a good idea to use `require` to check if
-        // functions are called correctly.
-        // As a second argument, you can also provide an
-        // explanation about what went wrong.
-        require(
-            msg.sender == chairperson,
-            "Only chairperson can give right to vote."
-        );
-        require(
-            !voters[voter].voted,
-            "The voter already voted."
-        );
-        require(voters[voter].weight == 0);
-        voters[voter].weight = 1;
+    function addUser(address addr) public onlyRole(GAME_CONTROLLER_ROLE) {
+        require(_checkNotJoined(addr), "Game: user already exists");
+        users[addr] = User(block.timestamp); // NOTE: this should be the timestamp of last block mined
     }
 
-    /// Delegate your vote to the voter `to`.
-    function delegate(address to) external {
-        // assigns reference
-        Voter storage sender = voters[msg.sender];
-        require(sender.weight != 0, "You have no right to vote");
-        require(!sender.voted, "You already voted.");
+    function checkNotJoined(address addr) public view returns (bool) {
+        return _checkNotJoined(addr);
+    }
 
-        require(to != msg.sender, "Self-delegation is disallowed.");
-
-        // Forward the delegation as long as
-        // `to` also delegated.
-        // In general, such loops are very dangerous,
-        // because if they run too long, they might
-        // need more gas than is available in a block.
-        // In this case, the delegation will not be executed,
-        // but in other situations, such loops might
-        // cause a contract to get "stuck" completely.
-        while (voters[to].delegate != address(0)) {
-            to = voters[to].delegate;
-
-            // We found a loop in the delegation, not allowed.
-            require(to != msg.sender, "Found loop in delegation.");
-        }
-
-        Voter storage delegate_ = voters[to];
-
-        // Voters cannot delegate to accounts that cannot vote.
-        require(delegate_.weight >= 1);
-
-        // Since `sender` is a reference, this
-        // modifies `voters[msg.sender]`.
-        sender.voted = true;
-        sender.delegate = to;
-
-        if (delegate_.voted) {
-            // If the delegate already voted,
-            // directly add to the number of votes
-            proposals[delegate_.vote].voteCount += sender.weight;
+    function _checkNotJoined(address addr) internal view returns (bool) {
+        if (users[addr].joinedTime > 0) {
+            return false;
         } else {
-            // If the delegate did not vote yet,
-            // add to her weight.
-            delegate_.weight += sender.weight;
+            return true;
         }
     }
 
-    /// Give your vote (including votes delegated to you)
-    /// to proposal `proposals[proposal].name`.
-    function vote(uint proposal) external {
-        Voter storage sender = voters[msg.sender];
-        require(sender.weight != 0, "Has no right to vote");
-        require(!sender.voted, "Already voted.");
-        sender.voted = true;
-        sender.vote = proposal;
-
-        // If `proposal` is out of the range of the array,
-        // this will throw automatically and revert all
-        // changes.
-        proposals[proposal].voteCount += sender.weight;
+    function getBattleId() public view onlyRole(GAME_CONTROLLER_ROLE) returns (uint) {
+        return uint(_battleId.current());
     }
 
-    /// @dev Computes the winning proposal taking all
-    /// previous votes into account.
-    function winningProposal() public view
-            returns (uint winningProposal_)
-    {
-        uint winningVoteCount = 0;
-        for (uint p = 0; p < proposals.length; p++) {
-            if (proposals[p].voteCount > winningVoteCount) {
-                winningVoteCount = proposals[p].voteCount;
-                winningProposal_ = p;
-            }
+    function addBattle(uint goldAmount, uint nftId, uint startTime, uint endTime) public onlyRole(GAME_CONTROLLER_ROLE) returns (uint) {
+        require(startTime < endTime, "Game: startTime must be smaller than endTime");
+        require(endTime > block.timestamp, "Game: endTime must be larger than current timestamp");
+
+        Prize memory prize = Prize(goldAmount, nftId);
+        uint battleId = _battleId.current();
+        battles[battleId] = Battle(prize, startTime, endTime, [address(0), address(0)], address(0));
+        _battleId.increment();
+
+        return battleId;
+    }
+
+    modifier onlyIfBattleIdExist(uint battleId_) {
+        require(_battleId.current() > 0, "Game: battles have not been added yet");
+        require(battleId_ < _battleId.current(), "Game: requested battleId does not exist");
+        _;
+    }
+
+    function getBattle(uint battleId_) public view onlyIfBattleIdExist(battleId_) returns(Battle memory _battle) {
+        _battle = battles[battleId_];
+    }
+
+    function joinBattle(uint battleId_) public onlyIfBattleIdExist(battleId_) {
+        require(_checkNotJoined(msg.sender) == false, "Game: only existing users can join the battle");
+        require(battles[battleId_].players[0] != msg.sender && battles[battleId_].players[1] != msg.sender, "Game: you have already joined the battle");
+        require(battles[battleId_].players[0] == address(0) || battles[battleId_].players[1] == address(0), "Game: the battle already has 2 users assigned to play");
+
+        if (battles[battleId_].players[0] == address(0)) {
+            battles[battleId_].players[0] = msg.sender;
+        } else {
+            battles[battleId_].players[1] = msg.sender;
         }
     }
 
-    // Calls winningProposal() function to get the index
-    // of the winner contained in the proposals array and then
-    // returns the name of the winner
-    function winnerName() external view
-            returns (bytes32 winnerName_)
-    {
-        winnerName_ = proposals[winningProposal()].name;
-    }
 }

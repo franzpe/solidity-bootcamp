@@ -42,3 +42,7 @@ To run scripts:
 `yarn run ts-node scripts/contracts/GameTokens/assignMinterRole.ts`
 `yarn run ts-node scripts/contracts/GameTokens/mint.ts`
 `yarn run ts-node scripts/contracts/GameTokens/mintBatch.ts`
+
+# Game contract
+To run unit tests:
+`yarn hardhat test tests/Game.ts`

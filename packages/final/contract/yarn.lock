@@ -1964,7 +1964,7 @@ __metadata:
     dotenv: ^16.0.3
     ethers: ^5.4.7
     files-from-path: ^1.0.0
-    hardhat: ^2.12.7
+    hardhat: ^2.13.0
     hardhat-gas-reporter: ^1.0.8
     jimp: ^0.22.7
     mocha: ^10.2.0
@@ -4575,7 +4575,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat@npm:^2.12.7":
+"hardhat@npm:^2.13.0":
   version: 2.13.0
   resolution: "hardhat@npm:2.13.0"
   dependencies:
