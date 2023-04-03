@@ -13,7 +13,7 @@ const days: number = 1;
 const stTS = currentTS;
 const endTS = currentTS + days*24*60*60;
 
-describe("When Game is deployed", function () {
+describe("Test Game contract", function () {
     let gameContract: Game;
     let deployer: ethers.Signer;
     let otherUser: ethers.Signer;
@@ -68,6 +68,8 @@ describe("When Game is deployed", function () {
 
             let battleId = await gameContract.addBattle(GOLD, NFTid, stTS, endTS);
             expect(battleId.value).to.be.eq(curBattleId);
+            await expect(gameContract.addBattle(GOLD, NFTid, endTS, stTS)).to.be.revertedWith("Game: startTime must be smaller than endTime");
+            await expect(gameContract.addBattle(GOLD, NFTid, 0, 1)).to.be.revertedWith("Game: endTime must be larger than block.timestamp");
 
             let newBattleId = await gameContract.getBattleId();
             // console.log(`new battleId is ${newBattleId}`);
@@ -101,6 +103,43 @@ describe("When Game is deployed", function () {
             await expect(gameContract.connect(anotherUser).joinBattle(battleId.value)).to.be.revertedWith("Game: the battle already has 2 users assigned to play");
         });
 
+        it("set joinBattleCost>0 condition and check joining reverts when the condition is not met", async function () {
+            let battleId = await gameContract.addBattle(GOLD, NFTid, stTS, endTS);
+
+            await gameContract.addUser(deployer.address);
+            await gameContract.setJoinBattleCost(1);
+            await expect(gameContract.joinBattle(battleId.value)).to.be.revertedWith("Game: user must pay value>=joinBattleCost, use getJoinBattleCost to check the cost");
+
+            await gameContract.setJoinBattleCost(0);
+            await gameContract.joinBattle(battleId.value);
+
+            const battle = await gameContract.getBattle(battleId.value);
+            expect(battle.players[0]).to.eq(deployer.address);
+        });
+    })
+
+    describe("checking season functionalities", function () {
+        it("game controller can add a season, and it is not possible to get non-existing season", async function () {
+            let curSeasonId = await gameContract.getSeasonId();
+            // console.log(`current SeasonId is ${curSeasonId}`);
+
+            let seasonId = await gameContract.addSeason(0, 9, stTS, endTS);
+            expect(seasonId.value).to.be.eq(curSeasonId);
+            await expect(gameContract.addSeason(0, 9, endTS, stTS)).to.be.revertedWith("Game: startTime must be smaller than endTime");
+            await expect(gameContract.addSeason(0, 9, 0, 1)).to.be.revertedWith("Game: endTime must be larger than block.timestamp");
+
+            let newSeasonId = await gameContract.getSeasonId();
+            // console.log(`new weasonId is ${newSeasonId}`);
+
+            const season = await gameContract.getSeason(seasonId.value);
+            // console.log(`season: ${season}`);
+            expect(season.firstBattle).to.eq(0);
+            expect(season.lastBattle).to.eq(9);
+            expect(season.startTime).to.eq(stTS);
+            expect(season.endTime).to.eq(endTS);
+
+            await expect(gameContract.getSeason(1)).to.be.revertedWith("Game: requested seasonId does not exist");
+        });
     })
 
 })
