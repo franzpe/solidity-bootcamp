@@ -9,6 +9,7 @@
 - [ ] Lobby
   - [x] Join
   - [x] Leave
+  - [x] Websocket connnection invalidate queries
   - [ ] Challenge
   - [ ] Accept / reject challenge
   - [ ] Pickpocket ?

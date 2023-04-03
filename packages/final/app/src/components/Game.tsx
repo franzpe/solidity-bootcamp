@@ -1,26 +1,36 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
+import io from 'socket.io-client';
+const socket = io('http://localhost:3001');
 
 const Game = () => {
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const currUser = session?.user as any;
-  const { data, status, refetch } = useQuery(['whatever'], () => axios.get('/game/lobby'));
+  const { data } = useQuery(['lobby'], () => axios.get('/game/lobby'));
 
-  const isInLobby = data?.data.findIndex((d: any) => d.player._id === currUser._id) > -1;
+  useEffect(() => {
+    socket.on('receiveInvalidateQuery', (queryKeys: string[]) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys });
+    });
+  }, []);
+
+  const isInLobby = data?.data && data?.data.findIndex((d: any) => d.player._id === currUser._id) > -1;
 
   const joinLobbyMutation = useMutation({
     mutationFn: (id: string) => {
       return axios.post(`/game/lobby/${id}`);
     },
-    onSuccess: () => refetch(),
+    onSuccess: () => socket.emit('sendInvalidateQuery', ['lobby']),
   });
 
   const leaveLobbyMutation = useMutation({
     mutationFn: (id: string) => {
       return axios.delete(`/game/lobby/${id}`);
     },
-    onSuccess: () => refetch(),
+    onSuccess: () => socket.emit('sendInvalidateQuery', ['lobby']),
   });
 
   return (
