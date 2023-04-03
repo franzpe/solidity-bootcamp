@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { RouterModule } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
+import { GameModule } from 'src/game/game.module';
 import { ItemsModule } from 'src/items/items.module';
 import { PlayersModule } from 'src/players/players.module';
 import { SeedsModule } from 'src/seeds/seeds.module';
@@ -15,11 +16,13 @@ import { AppService } from './app.service';
     ItemsModule,
     SpellsModule,
     PlayersModule,
+    GameModule,
     SeedsModule,
     RouterModule.register([
       { path: 'items', module: ItemsModule },
       { path: 'spells', module: SpellsModule },
       { path: 'players', module: PlayersModule },
+      { path: 'game', module: GameModule },
     ]),
     ConfigModule.forRoot(),
   ],

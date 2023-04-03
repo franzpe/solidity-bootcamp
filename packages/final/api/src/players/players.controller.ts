@@ -28,6 +28,11 @@ export class PlayersController {
     return this.playerService.findAll();
   }
 
+  @Get('/me/:address')
+  async me(@Param('address') address: string): Promise<Player> {
+    return this.playerService.findOne(address);
+  }
+
   @Get(':address')
   async findOne(@Param('address') address: string): Promise<Player> {
     return this.playerService.findOne(address);
