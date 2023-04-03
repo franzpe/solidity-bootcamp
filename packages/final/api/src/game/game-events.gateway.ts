@@ -23,9 +23,8 @@ export class GameEventsGateway
     console.log('Initialized');
   }
 
-  async handleConnection(client: any, ..._args: any[]) {
+  async handleConnection(client: Socket, ..._args: any[]) {
     console.log(`client connected: ${client.id}`);
-    this.wss.emit('receiveMessage', 'whatever');
   }
 
   handleDisconnect(client: any) {
@@ -38,5 +37,16 @@ export class GameEventsGateway
     payload: string[],
   ): Promise<void> {
     this.wss.emit('receiveInvalidateQuery', payload);
+  }
+
+  @SubscribeMessage('challenge')
+  async handleChallengeQuery(
+    _client: Socket,
+    payload: {
+      challengedBy: { _id: string; name: string; level: number };
+      challengeTo: string;
+    },
+  ): Promise<void> {
+    this.wss.emit('receiveChallenge', payload);
   }
 }
