@@ -5,23 +5,23 @@ import { useSession } from 'next-auth/react';
 const Game = () => {
   const { data: session } = useSession();
   const currUser = session?.user as any;
-  const { data, status } = useQuery(['whatever'], () => axios.get('/game/lobby'));
+  const { data, status, refetch } = useQuery(['whatever'], () => axios.get('/game/lobby'));
+
+  const isInLobby = data?.data.findIndex((d: any) => d.player._id === currUser._id) > -1;
 
   const joinLobbyMutation = useMutation({
     mutationFn: (id: string) => {
       return axios.post(`/game/lobby/${id}`);
     },
+    onSuccess: () => refetch(),
   });
 
   const leaveLobbyMutation = useMutation({
     mutationFn: (id: string) => {
       return axios.delete(`/game/lobby/${id}`);
     },
+    onSuccess: () => refetch(),
   });
-
-  if (status === 'loading') return null;
-
-  console.log(data);
 
   return (
     <div className="p-8">
@@ -32,7 +32,7 @@ const Game = () => {
               <h2 className="card-title">Game lobby</h2>
             </header>
             <ul>
-              {data ? (
+              {data?.data.length > 0 ? (
                 data?.data.map((p: any, idx: number) => (
                   <li key={p._id} className="font-medium space-x-4">
                     <span>{idx + 1}.</span>
@@ -57,12 +57,14 @@ const Game = () => {
               >
                 Join lobby
               </button>
-              <button
-                className="btn btn-sm btn-outline btn-error"
-                onClick={() => leaveLobbyMutation.mutate(currUser._id)}
-              >
-                Leave lobby
-              </button>
+              {isInLobby && (
+                <button
+                  className="btn btn-sm btn-outline btn-error"
+                  onClick={() => leaveLobbyMutation.mutate(currUser._id)}
+                >
+                  Leave lobby
+                </button>
+              )}
             </div>
           </div>
         </div>

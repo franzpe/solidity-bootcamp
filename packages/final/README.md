@@ -7,8 +7,8 @@
 - [ ] Validate jwt token from next-auth in nest application
 - [x] Pull player info on Login
 - [ ] Lobby
-  - [ ] Join
-  - [ ] Leave
+  - [x] Join
+  - [x] Leave
   - [ ] Challenge
   - [ ] Accept / reject challenge
   - [ ] Pickpocket ?
