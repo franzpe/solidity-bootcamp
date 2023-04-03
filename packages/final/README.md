@@ -3,7 +3,9 @@
 ## Global Features
 
 - [x] App project scaffolded by create-web3-dapp
-- [ ] Create player & authentication
+- [x] Create player & authentication
+- [ ] Validate jwt token from next-auth in nest application
+- [x] Pull player info on Login
 
 - FE nextjs (typescript) - rainbowkit, wagmi
   - Authentication - next-auth, wagmi, siwe, @rainbow-me/rainbowkit-siwe-next-auth

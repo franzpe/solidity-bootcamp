@@ -22,7 +22,7 @@ export default function Header() {
       </div>
       <div className="flex items-center">
         <div className="mr-6 transition hover:scale-110">
-          <Image src="/gold2.png" width={24} height={24} alt="gold" className="max-h-6 inline-block mr-2" />
+          <Image src="/gold.png" width={24} height={24} alt="gold" className="max-h-6 inline-block mr-2" />
           <span className="font-bold">0</span>
         </div>
         <div className="mr-6 relative transition hover:scale-110">

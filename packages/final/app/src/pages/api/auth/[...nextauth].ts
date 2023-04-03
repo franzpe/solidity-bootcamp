@@ -1,3 +1,4 @@
+import axios from 'axios';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { getCsrfToken } from 'next-auth/react';
@@ -60,11 +61,23 @@ export default async function auth(req: any, res: any) {
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+      async jwt({ token }) {
+        let player;
+
+        if (token?.sub) {
+          try {
+            // TODO provide access token that needs to be verified on game server
+            const { data } = await axios.get(`/players/me/${token.sub}`);
+            player = data;
+          } catch (err) {
+            console.log('Player not found');
+          }
+        }
+
+        return { ...token, player };
+      },
       async session({ session, token }: { session: any; token: any }) {
-        session.access_token = token.accessToken;
-        session.address = token.sub;
-        session.user.name = token.sub;
-        session.user.image = 'https://www.fillmurray.com/128/128';
+        session.user = token.player;
         return session;
       },
     },
