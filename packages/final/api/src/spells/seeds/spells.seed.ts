@@ -5,14 +5,14 @@ import { spells } from './spells';
 
 @Injectable()
 export class SpellsSeed {
-  constructor(private readonly itemsService: SpellsService) {}
+  constructor(private readonly spellsService: SpellsService) {}
 
   @Command({
     command: 'create:spells',
     describe: 'create spells',
   })
   async create() {
-    await Promise.all(spells.map((dto) => this.itemsService.create(dto)));
+    await Promise.all(spells.map((dto) => this.spellsService.create(dto)));
 
     console.log('Spells have been populated');
   }
@@ -22,7 +22,7 @@ export class SpellsSeed {
     describe: 'delete all spells',
   })
   async deleteAll() {
-    await this.itemsService.deleteAll();
+    await this.spellsService.deleteAll();
 
     console.log('All spells have been deleted');
   }
