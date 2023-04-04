@@ -8,7 +8,7 @@ contract GameTokens is ERC1155, AccessControl {
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    uint256 public constant GOLD = 0;
+    uint256 public constant GOLD = 0; // NOTE: all other IDs are for NFTs - do not change this as on Game contract's onERC1155Received function emits an NFTReceived event for Ids>0
 
     constructor(string memory uri_) ERC1155("") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
