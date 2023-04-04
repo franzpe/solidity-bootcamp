@@ -59,9 +59,11 @@ export class GameService {
   }
 
   setWinner(id: string, winner: string) {
-    return this.battleModel.findByIdAndUpdate(id, {
-      winner,
-      status: 'finished',
-    });
+    return this.battleModel
+      .findByIdAndUpdate(id, {
+        winner,
+        status: 'finished',
+      })
+      .populate('winner');
   }
 }

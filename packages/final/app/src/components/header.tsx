@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { signOut } from 'next-auth/react';
 import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
+import Link from 'next/link';
 
 export default function Header() {
   const account = useAccount();
@@ -17,7 +18,9 @@ export default function Header() {
     <header className="flex justify-between p-6 shadow-md">
       <div className="prose">
         <h2 className="text-3xl">
-          Rogue <span className="text-gray-50">Mansion</span>
+          <Link href="/" className="no-underline">
+            Rogue <span className="text-gray-50">Mansion</span>
+          </Link>
         </h2>
       </div>
       <div className="flex items-center">

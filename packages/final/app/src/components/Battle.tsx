@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import cx from 'classnames';
 import Image from 'next/image';
 import axios from 'axios';
@@ -27,7 +27,14 @@ const Battle = ({ id }: Props) => {
   const [turns, setTurns] = useState<TurnInfo[]>([]);
   const [hp, setHp] = useState<Record<string, { hp: number; dmg: number }>>();
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
   const currUser = session?.user as any;
+
+  const endBattle = useMutation((winner: string) => axios.post('/game/battle/' + id, { winner }), {
+    onSuccess: ({ data }) => {
+      queryClient.invalidateQueries({ queryKey: ['battle'] });
+    },
+  });
 
   const { data, isLoading } = useQuery(['battle'], () => axios.get('/game/battle/' + id), {
     onSuccess: ({ data }) => {
@@ -42,6 +49,11 @@ const Battle = ({ id }: Props) => {
           setTurns(prev => [...prev, hitPayload]);
           setHp(prev => {
             const hpLeft = (prev?.[hitPayload.to]?.hp || 0) - hitPayload.damage;
+
+            if (hpLeft < 0) {
+              // WON ENDGAME
+              endBattle.mutate(hitPayload.from);
+            }
             return {
               ...prev,
               [hitPayload.to]: {
@@ -82,13 +94,29 @@ const Battle = ({ id }: Props) => {
     });
   };
 
+  const isFinished = data?.data.status === 'finished';
+  const isWinner = currUser._id === data?.data.winner?._id;
+
   return (
     <div className="flex flex-col items-center justify-center h-full space-y-8">
+      {isFinished && (
+        <div className="prose">
+          <h1>
+            You've{' '}
+            {currUser?._id === data?.data?.winner._id ? (
+              <span className="text-success">won!</span>
+            ) : (
+              <span className="text-error">lost!</span>
+            )}
+          </h1>
+        </div>
+      )}
       <div className="flex space-x-8">
         <div>
           <div
             className={cx('card card-compact bg-base-300', {
-              ['shadow-inner shadow-yellow-400 border border-yellow-400']: turnId === data?.data.player1._id,
+              ['shadow-inner shadow-yellow-400 border border-yellow-400']:
+                turnId === data?.data.player1._id && !isFinished,
             })}
           >
             <figure className="p-4 pb-0 flex flex-col">
@@ -111,14 +139,16 @@ const Battle = ({ id }: Props) => {
                   key={s._id}
                   className="rounded-lg border border-gray-800 hover:border-gray-200 tooltip tooltip-warning tooltip-bottom whitespace-pre"
                   data-tip={`Name: ${s.name}\nRequired level: ${s.requiredLevel}\nDamage: ${s.baseDamage}`}
-                  disabled={currUser?._id !== data?.data.player1._id}
+                  disabled={
+                    currUser?._id !== data?.data.player1._id || turnId !== data?.data.player1._id || isFinished
+                  }
                   onClick={handleAttack(1, idx)}
                 >
                   <img
                     src={s.imageUri}
                     alt="attack"
                     className={cx('rounded-lg', {
-                      ['filter grayscale']: currUser?._id !== data?.data.player1._id,
+                      ['filter grayscale']: currUser?._id !== data?.data.player1._id || isFinished,
                     })}
                   />
                 </button>
@@ -129,7 +159,8 @@ const Battle = ({ id }: Props) => {
         <div>
           <div
             className={cx('card card-compact bg-base-300', {
-              ['shadow-inner shadow-yellow-400 border border-yellow-400']: turnId === data?.data.player2._id,
+              ['shadow-inner shadow-yellow-400 border border-yellow-400']:
+                turnId === data?.data.player2._id && !isFinished,
             })}
           >
             <figure className="p-4 pb-0 flex flex-col">
@@ -152,14 +183,16 @@ const Battle = ({ id }: Props) => {
                   key={s._id}
                   className="rounded-lg border border-gray-800 hover:border-gray-200 tooltip tooltip-warning tooltip-bottom whitespace-pre"
                   data-tip={`Name: ${s.name}\nRequired level: ${s.requiredLevel}\nDamage: ${s.baseDamage}`}
-                  disabled={currUser?._id !== data?.data.player2._id}
+                  disabled={
+                    currUser?._id !== data?.data.player2._id || turnId !== data?.data.player2._id || isFinished
+                  }
                   onClick={handleAttack(2, idx)}
                 >
                   <img
                     src={s.imageUri}
                     alt="attack"
                     className={cx('rounded-lg', {
-                      ['filter grayscale']: currUser?._id !== data?.data.player2._id,
+                      ['filter grayscale']: currUser?._id !== data?.data.player2._id || isFinished,
                     })}
                   />
                 </button>
@@ -188,6 +221,11 @@ const Battle = ({ id }: Props) => {
           </div>
         </div>
       </div>
+      {isWinner && (
+        <div className="text-center">
+          <button className="btn btn-xl">Collect reward and exit</button>
+        </div>
+      )}
     </div>
   );
 };
