@@ -56,4 +56,21 @@ export class GameEventsGateway
   ): Promise<void> {
     this.wss.emit('challengeResponse', payload);
   }
+
+  @SubscribeMessage('attack')
+  async handleAttack(
+    _client: Socket,
+    payload: {
+      battleId: string;
+      from: string;
+      fromName: string;
+      to: string;
+      toName: string;
+      spell: string;
+      damage: number;
+      isCritical: boolean;
+    },
+  ): Promise<void> {
+    this.wss.emit('receiveHit', payload);
+  }
 }

@@ -16,8 +16,12 @@
 - [ ] Character View
 - [ ] Fight
 
-  - [ ]
-  - [ ]
+  - [x] Layout
+  - [x] Attack
+  - [x] Combats
+  - [ ] End with winner
+  - [ ] Message?
+  - [ ] Receive rewards
 
 - FE nextjs (typescript) - rainbowkit, wagmi
   - Authentication - next-auth, wagmi, siwe, @rainbow-me/rainbowkit-siwe-next-auth

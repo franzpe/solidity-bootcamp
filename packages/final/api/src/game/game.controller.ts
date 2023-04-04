@@ -11,6 +11,11 @@ export class GameController {
     return await this.gameService.joinLobby(id);
   }
 
+  @Post('/challenge-response')
+  async responseChallenge(@Body() dto: ChallengeResponse) {
+    return this.gameService.responseChallenge(dto);
+  }
+
   @Delete('/lobby/:id')
   async leave(@Param('id') id: string) {
     return await this.gameService.leaveLobby(id);
@@ -21,8 +26,13 @@ export class GameController {
     return this.gameService.findAllPlayersInLobby();
   }
 
-  @Post('/challenge-response')
-  async responseChallenge(@Body() dto: ChallengeResponse) {
-    return this.gameService.responseChallenge(dto);
+  @Get('/battle/:id')
+  async find(@Param('id') id: string) {
+    return this.gameService.findBattle(id);
+  }
+
+  @Post('/battle/:id')
+  async setWinner(@Param('id') id: string, @Body() body: { winner: string }) {
+    return this.gameService.setWinner(id, body.winner);
   }
 }

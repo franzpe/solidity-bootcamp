@@ -51,4 +51,17 @@ export class GameService {
 
     return id;
   }
+
+  findBattle(id: string) {
+    return this.battleModel
+      .findOne({ _id: id })
+      .populate(['player1', 'player2', 'winner']);
+  }
+
+  setWinner(id: string, winner: string) {
+    return this.battleModel.findByIdAndUpdate(id, {
+      winner,
+      status: 'finished',
+    });
+  }
 }

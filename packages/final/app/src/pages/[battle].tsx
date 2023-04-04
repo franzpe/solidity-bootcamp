@@ -1,13 +1,17 @@
+import Battle from '@/components/Battle';
+import Layout from '@/layout/Layout';
 import { useRouter } from 'next/router';
 
-const Battle = () => {
+const BattleContainer = () => {
   const { query } = useRouter();
 
+  if (!query.battle) return null;
+
   return (
-    <div>
-      <h2>Battle {query.battle}</h2>
-    </div>
+    <Layout>
+      <Battle id={query.battle} />
+    </Layout>
   );
 };
 
-export default Battle;
+export default BattleContainer;

@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import io from 'socket.io-client';
-const socket = io('http://localhost:3001');
+
+export const socket = io('http://localhost:3001');
 
 const Game = () => {
   const router = useRouter();
