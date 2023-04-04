@@ -10,11 +10,14 @@
   - [x] Join
   - [x] Leave
   - [x] Websocket connnection invalidate queries
-  - [ ] Challenge
-  - [ ] Accept / reject challenge
+  - [x] Challenge
+  - [x] Accept / reject challenge
   - [ ] Pickpocket ?
 - [ ] Character View
 - [ ] Fight
+
+  - [ ]
+  - [ ]
 
 - FE nextjs (typescript) - rainbowkit, wagmi
   - Authentication - next-auth, wagmi, siwe, @rainbow-me/rainbowkit-siwe-next-auth

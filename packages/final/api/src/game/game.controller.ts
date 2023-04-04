@@ -1,4 +1,5 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { ChallengeResponse } from './dtos/response-challenge.dto';
 import { GameService } from './game.service';
 
 @Controller()
@@ -18,5 +19,10 @@ export class GameController {
   @Get('/lobby')
   async findAll(): Promise<any[]> {
     return this.gameService.findAllPlayersInLobby();
+  }
+
+  @Post('/challenge-response')
+  async responseChallenge(@Body() dto: ChallengeResponse) {
+    return this.gameService.responseChallenge(dto);
   }
 }

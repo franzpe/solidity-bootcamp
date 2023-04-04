@@ -7,6 +7,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ChallengeResponse } from './dtos/response-challenge.dto';
 
 @WebSocketGateway({
   cors: {
@@ -40,7 +41,7 @@ export class GameEventsGateway
   }
 
   @SubscribeMessage('challenge')
-  async handleChallengeQuery(
+  async handleChallenge(
     _client: Socket,
     payload: {
       challengedBy: { _id: string; name: string; level: number };
@@ -48,5 +49,11 @@ export class GameEventsGateway
     },
   ): Promise<void> {
     this.wss.emit('receiveChallenge', payload);
+  }
+
+  async handleChallengeResponse(
+    payload: ChallengeResponse & { battleId?: string },
+  ): Promise<void> {
+    this.wss.emit('challengeResponse', payload);
   }
 }

@@ -2,44 +2,19 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import io from 'socket.io-client';
 const socket = io('http://localhost:3001');
 
 const Game = () => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const currUser = session?.user as any;
   const { data } = useQuery(['lobby'], () => axios.get('/game/lobby'));
   const [challenger, setChallenger] = useState<{ name: string; level: number; _id: number } | undefined>();
-
-  useEffect(() => {
-    socket.on('receiveInvalidateQuery', (queryKeys: string[]) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys });
-    });
-  }, []);
-
-  const isInLobby = useMemo(
-    () => data?.data && data?.data.findIndex((d: any) => d.player._id === currUser._id) > -1,
-    [data?.data],
-  );
-
-  useEffect(() => {
-    socket.on('receiveChallenge', payload => {
-      if (payload.challengeTo === currUser._id) {
-        setChallenger({
-          _id: payload.challengedBy._id,
-          name: payload.challengedBy.name,
-          level: payload.challengedBy.level,
-        });
-      }
-    });
-
-    return () => {
-      socket.off('receiveChallenge');
-      setChallenger(undefined);
-    };
-  }, [isInLobby]);
+  const [challengingIdx, setChallengingIdx] = useState<number | undefined>();
 
   const joinLobbyMutation = useMutation({
     mutationFn: (id: string) => {
@@ -59,13 +34,81 @@ const Game = () => {
     },
   });
 
+  const responseChallenge = useMutation({
+    mutationFn: (response: boolean) => {
+      return axios.post(`/game/challenge-response`, {
+        challengedById: challenger?._id,
+        challengedTo: currUser._id,
+        response,
+      });
+    },
+    onSuccess: ({ data }) => {
+      if (data !== '') {
+        console.log('BATTLE CAN BEGIN', data);
+        startBattle(data);
+      } else {
+        setChallenger(undefined);
+      }
+    },
+  });
+
+  useEffect(() => {
+    socket.on('receiveInvalidateQuery', (queryKeys: string[]) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys });
+    });
+  }, []);
+
+  const isInLobby = useMemo(
+    () => data?.data && data?.data.findIndex((d: any) => d.player._id === currUser._id) > -1,
+    [data?.data],
+  );
+
+  const startBattle = (battleId: string) => {
+    router.push('/' + battleId);
+    //TODO
+  };
+
+  useEffect(() => {
+    socket.on('receiveChallenge', payload => {
+      if (payload.challengeTo === currUser._id) {
+        setChallenger({
+          _id: payload.challengedBy._id,
+          name: payload.challengedBy.name,
+          level: payload.challengedBy.level,
+        });
+      }
+    });
+
+    socket.on('challengeResponse', payload => {
+      console.log(payload);
+      if (payload.challengedById === currUser._id) {
+        if (!payload.response) {
+          // Player rejected challenge "Pussy"
+          setChallengingIdx(undefined);
+        } else {
+          console.log('BATTLE CAN BEGIN', payload.battleId);
+          startBattle(payload.battleId);
+        }
+      }
+    });
+
+    return () => {
+      socket.off('receiveChallenge');
+      setChallenger(undefined);
+    };
+  }, [isInLobby]);
+
   const handleChallenge = (idx: number) => (e: any) => {
     socket.emit('challenge', {
       challengedBy: { _id: currUser._id, name: currUser.name, level: currUser.level },
       challengeTo: data?.data[idx].player._id,
     });
 
-    window.alert(`You have challenged player ${data?.data[idx].player.name}`);
+    setChallengingIdx(idx);
+  };
+
+  const handleChallengeResponse = (response: boolean) => (e: any) => {
+    responseChallenge.mutate(response);
   };
 
   return (
@@ -99,7 +142,7 @@ const Game = () => {
                           alt="challenge"
                           className="filter invert"
                         />
-                        <span>CHALLENGE</span>
+                        <span>{challengingIdx !== idx ? 'CHALLENGE' : 'WAITING FOR RESPONSE'}</span>
                       </button>
                     )}
                   </li>
@@ -139,8 +182,12 @@ const Game = () => {
             </figure>
             <div className="card-body space-y-2">
               <div className="card-actions flex justify-between space-x-4">
-                <button className="btn btn-sm btn-success">ACCEPT</button>
-                <button className="btn btn-sm btn-error">REJECT</button>
+                <button className="btn btn-sm btn-success" onClick={handleChallengeResponse(true)}>
+                  ACCEPT
+                </button>
+                <button className="btn btn-sm btn-error" onClick={handleChallengeResponse(false)}>
+                  REJECT
+                </button>
               </div>
             </div>
           </div>
