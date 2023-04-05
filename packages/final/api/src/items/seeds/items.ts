@@ -2,6 +2,7 @@ import { CreateItemDto } from '../dto/create-item.dto';
 
 export const items: CreateItemDto[] = [
   {
+    // 1
     name: "Poorman's knife",
     damage: 2,
     slot: 'weapon',
@@ -10,6 +11,7 @@ export const items: CreateItemDto[] = [
     imgUri: '#',
   },
   {
+    // 2
     name: 'Layered Tunic',
     slot: 'chest',
     description: 'Well worn chest',
@@ -17,6 +19,7 @@ export const items: CreateItemDto[] = [
     imgUri: '#',
   },
   {
+    // 3
     name: 'Gnarpline Leggins',
     slot: 'legs',
     description: 'Gnarpline Leggins',
@@ -24,6 +27,7 @@ export const items: CreateItemDto[] = [
     imgUri: '#',
   },
   {
+    // 4
     name: 'Nightscape Headband',
     slot: 'head',
     description: 'Headband',

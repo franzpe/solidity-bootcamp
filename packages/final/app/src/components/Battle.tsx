@@ -129,7 +129,13 @@ const Battle = ({ id }: Props) => {
             <figure className="p-4 pb-0 flex flex-col">
               <Image src="/avatar.jpeg" width={128} height={128} alt="challenge" className="rounded-lg" />
               <div className="badge badge-accent mt-4">level: {data?.data.player1.level}</div>
-              <p className="text-center text-2xl my-2 prose">{data?.data.player1.name}</p>
+              <p
+                className={cx('text-center text-2xl my-2 prose', {
+                  ['text-gray-200']: currUser?._id === data?.data.player1._id,
+                })}
+              >
+                {data?.data.player1.name}
+              </p>
             </figure>
           </div>
           <div className="mt-2 px-2">
@@ -173,7 +179,13 @@ const Battle = ({ id }: Props) => {
             <figure className="p-4 pb-0 flex flex-col">
               <Image src="/avatar2.jpeg" width={128} height={128} alt="challenge" className="rounded-lg" />
               <div className="badge badge-accent mt-4">level: {data?.data.player2.level}</div>
-              <p className="text-center text-2xl my-2 prose">{data?.data.player2.name}</p>
+              <p
+                className={cx('text-center text-2xl my-2 prose', {
+                  ['text-gray-200']: currUser?._id === data?.data.player2._id,
+                })}
+              >
+                {data?.data.player2.name}
+              </p>
             </figure>
           </div>
           <div className="mt-2 px-2">
@@ -207,6 +219,7 @@ const Battle = ({ id }: Props) => {
           </div>
         </div>
       </div>
+
       <div
         className="flex flex-col bg-base-300 shadow-xl h-56 rounded-lg overflow-auto"
         style={{ width: '680px' }}

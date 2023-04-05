@@ -198,6 +198,7 @@ const Game = () => {
           </div>
         </section>
       )}
+
       <section>
         <div className="card card-compact  bg-base-300 shadow-xl">
           <div className="card-body space-y-2">
@@ -212,7 +213,6 @@ const Game = () => {
                   key={p._id}
                   className={cx('font-medium space-x-4 flex items-center', {
                     ['text-amber-500']: idx === 0,
-                    ['text-stone-300']: idx === 1,
                   })}
                 >
                   <span className="w-2">{idx + 1}.</span>
@@ -223,7 +223,6 @@ const Game = () => {
                   <div className="badge badge-outline">
                     {p.wins} win{p.wins > 1 ? 's' : ''}
                   </div>
-                  {currUser?._id === p.player._id && <span>[ME]</span>}
                 </li>
               ))}
             </ul>
