@@ -126,9 +126,10 @@ const Game = () => {
               {data?.data.length > 0 ? (
                 data?.data.map((p: any, idx: number) => (
                   <li key={p._id} className="font-medium space-x-4 flex items-center">
-                    <span className="w-4">{idx + 1}.</span>
-                    <span>
-                      <b>{p.player.name}</b>{' '}
+                    <span className="w-2">{idx + 1}.</span>
+                    <span className="flex items-center">
+                      {currUser?._id === p.player._id && <span className="badge badge-success badge-xs mr-2" />}
+                      <b className="font-bold text-green-300 mr-2">{p.player.name}</b>{' '}
                       <i>({[p.player.address.slice(0, 8), '....', p.player.address.slice(-4)].join('')})</i>
                     </span>
                     <span>
@@ -214,16 +215,15 @@ const Game = () => {
                     ['text-stone-300']: idx === 1,
                   })}
                 >
-                  <span className="w-4">{idx + 1}.</span>
+                  <span className="w-2">{idx + 1}.</span>
                   <span>
                     <b>{p.player.name}</b>{' '}
                     <i>({[p.player.address.slice(0, 8), '....', p.player.address.slice(-4)].join('')})</i>
                   </span>
-                  <span>
-                    <div className="badge badge-outline">
-                      {p.wins} win{p.wins > 1 ? 's' : ''}
-                    </div>
-                  </span>
+                  <div className="badge badge-outline">
+                    {p.wins} win{p.wins > 1 ? 's' : ''}
+                  </div>
+                  {currUser?._id === p.player._id && <span>[ME]</span>}
                 </li>
               ))}
             </ul>
