@@ -220,7 +220,9 @@ const Game = () => {
                     <i>({[p.player.address.slice(0, 8), '....', p.player.address.slice(-4)].join('')})</i>
                   </span>
                   <span>
-                    <b>{p.wins}</b>
+                    <div className="badge badge-outline">
+                      {p.wins} win{p.wins > 1 ? 's' : ''}
+                    </div>
                   </span>
                 </li>
               ))}
