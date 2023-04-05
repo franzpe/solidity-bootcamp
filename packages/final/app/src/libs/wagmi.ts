@@ -5,6 +5,7 @@ import {
   arbitrum,
   arbitrumGoerli,
   goerli,
+  sepolia,
   mainnet,
   optimism,
   optimismGoerli,
@@ -15,7 +16,7 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
 export const { chains, provider } = configureChains(
-  [mainnet, goerli, polygon, polygonMumbai, optimism, optimismGoerli, arbitrum, arbitrumGoerli],
+  [mainnet, goerli, sepolia, polygon, polygonMumbai, optimism, optimismGoerli, arbitrum, arbitrumGoerli],
   [alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY || '' }), publicProvider()],
 );
 
