@@ -1,5 +1,6 @@
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
+import { ethers } from 'ethers';
 import { configureChains, createClient } from 'wagmi';
 import {
   arbitrum,
@@ -14,10 +15,9 @@ import {
 } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
-
 export const { chains, provider } = configureChains(
-  [mainnet, goerli, sepolia, polygon, polygonMumbai, optimism, optimismGoerli, arbitrum, arbitrumGoerli],
-  [alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY || '' }), publicProvider()],
+  [sepolia, mainnet, goerli, polygon, polygonMumbai, optimism, optimismGoerli, arbitrum, arbitrumGoerli],
+  [alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || '' }), publicProvider()],
 );
 
 const { connectors } = getDefaultWallets({

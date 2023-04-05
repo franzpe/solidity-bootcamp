@@ -1,18 +1,19 @@
+import gameTokens from '@/abis/gameTokensAbi.json';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ethers } from 'ethers';
 import Image from 'next/image';
-import { signOut } from 'next-auth/react';
-import { useEffect } from 'react';
-import { useAccount } from 'wagmi';
 import Link from 'next/link';
+import { useAccount, useContractRead } from 'wagmi';
 
 export default function Header() {
   const account = useAccount();
 
-  useEffect(() => {
-    if (account.isDisconnected) {
-      signOut();
-    }
-  }, [account.isDisconnected]);
+  const { data } = useContractRead({
+    address: process.env.NEXT_PUBLIC_GAME_TOKENS_CONTRACT_ADDRESS as any,
+    abi: gameTokens,
+    functionName: 'balanceOf',
+    args: [account.address, '0'],
+  });
 
   return (
     <header className="flex justify-between p-6 shadow-md">
@@ -23,10 +24,11 @@ export default function Header() {
           </Link>
         </h2>
       </div>
+      <button>mint</button>
       <div className="flex items-center">
         <div className="mr-6 transition hover:scale-110">
           <Image src="/gold.png" width={24} height={24} alt="gold" className="max-h-6 inline-block mr-2" />
-          <span className="font-bold">0</span>
+          <span className="font-bold">{ethers.utils.formatUnits(data as any, 'wei')}</span>
         </div>
         <div className="mr-6 relative transition hover:scale-110">
           <Image

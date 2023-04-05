@@ -210,7 +210,7 @@ const Game = () => {
             <ul className="space-y-2">
               {rankings?.data.map((p: any, idx: number) => (
                 <li
-                  key={p._id}
+                  key={p.player._id}
                   className={cx('font-medium space-x-4 flex items-center', {
                     ['text-amber-500']: idx === 0,
                   })}
