@@ -1,0 +1,10 @@
+{
+  "name": "Poorman's knife",
+  "description": "This is super basic knife that cuts you open",
+  "slot": "weapon",
+  "strength": 0,
+  "armor": 0,
+  "damage": 2,
+  "image": "https://ipfs.io/ipfs/bafkreighxqiospjx4u2tqbgwb5qgykiiuv7ncgvw2p2u6jbfr4j5n7uk24",
+  "level": 1
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Layered Tunic",
+  "description": "Leather chest armor, not great not terrible",
+  "slot": "chest",
+  "strength": 1,
+  "armor": 2,
+  "damage": 0,
+  "image": "https://ipfs.io/ipfs/bafkreiej2m5dzoixbeh5gb25q3e4nhoghhzaw22ek7i3l526pjlfbswmfa",
+  "level": 1
+}
