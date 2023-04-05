@@ -91,11 +91,14 @@ const Login = () => {
           height={800}
         />
         <main>
-          {!isConnected && <ConnectButton label="Play"></ConnectButton>}
+          <blockquote className="text-xl italic font-semibold text-gray-900 dark:text-white mb-4">
+            <p>"There needs to be an honor among thiefs!"</p>
+          </blockquote>
+          {!isConnected && <ConnectButton label="Play the Game"></ConnectButton>}
           {isConnected && registerForm.shouldRegister && (
             <form className="flex flex-row items-end space-x-4" onSubmit={handleSubmitRegister}>
               <div className="flex flex-col items-start space-y-4">
-                <label htmlFor="name">Your deadly name?</label>
+                <label htmlFor="name">What's your deadly name?</label>
                 <input
                   id="name"
                   type="text"

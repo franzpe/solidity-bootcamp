@@ -26,6 +26,11 @@ export class GameController {
     return this.gameService.findAllPlayersInLobby();
   }
 
+  @Get('/rankings')
+  async getRankings(): Promise<any[]> {
+    return this.gameService.getRankings();
+  }
+
   @Get('/battle/:id')
   async find(@Param('id') id: string) {
     return this.gameService.findBattle(id);

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
+import { Player, PlayerDocument } from 'src/players/schemas/player.schema';
 import { ChallengeResponse } from './dtos/response-challenge.dto';
 import { GameEventsGateway } from './game-events.gateway';
 import { Battle, BattleDocument } from './schemas/battle.schema';
@@ -32,6 +33,27 @@ export class GameService {
 
   async findAllPlayersInLobby() {
     return await this.lobbyModel.find().populate('player').exec();
+  }
+
+  async getRankings(): Promise<{ player: Player; wins: number }[]> {
+    let rankings: Record<string, { player: Player; wins: number }> = {};
+
+    const finishedBattles = await this.battleModel
+      .find({ status: 'finished' })
+      .populate('winner')
+      .exec();
+
+    finishedBattles.forEach((f) => {
+      rankings[f.winner.address] = {
+        ...rankings[f.winner.address],
+        player: f.winner,
+        wins: rankings[f.winner.address]?.wins
+          ? rankings[f.winner.address].wins + 1
+          : 1,
+      };
+    });
+
+    return Object.values(rankings).sort((a, b) => b.wins - a.wins);
   }
 
   async responseChallenge(dto: ChallengeResponse) {

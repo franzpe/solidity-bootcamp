@@ -1,10 +1,12 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import cx from 'classnames';
-import Image from 'next/image';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useEffect, useId, useState } from 'react';
-import { socket } from './Game';
+import cx from 'classnames';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { socket } from './Game';
 import HealthBar from './HealthBar';
 
 type Props = { id: string | string[] };
@@ -25,6 +27,7 @@ const TOTAL_HP = 50;
 const Battle = ({ id }: Props) => {
   const [turnId, setTurnId] = useState<string | undefined>();
   const [turns, setTurns] = useState<TurnInfo[]>([]);
+  const router = useRouter();
   const [hp, setHp] = useState<Record<string, { hp: number; dmg: number }>>();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
@@ -96,6 +99,10 @@ const Battle = ({ id }: Props) => {
 
   const isFinished = data?.data.status === 'finished';
   const isWinner = currUser._id === data?.data.winner?._id;
+
+  const handleCollectReward = (e: any) => {
+    router.push('/');
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-full space-y-8">
@@ -213,17 +220,24 @@ const Battle = ({ id }: Props) => {
                   <b>
                     {t.damage} {t.isCritical ? '(CRITICAL) ' : ''}
                   </b>
-                  damage to
-                  {t.toName} with spell {t.spell}
+                  damage to {t.toName} with spell {t.spell}
                 </li>
               ))}
             </ul>
           </div>
         </div>
       </div>
-      {isWinner && (
+      {isFinished && (
         <div className="text-center">
-          <button className="btn btn-xl">Collect reward and exit</button>
+          {isWinner ? (
+            <button className="btn btn-xl" onClick={handleCollectReward}>
+              Collect reward and exit
+            </button>
+          ) : (
+            <Link className="btn btn-xl" href="/">
+              Go to lobby
+            </Link>
+          )}
         </div>
       )}
     </div>

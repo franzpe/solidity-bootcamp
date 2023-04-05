@@ -13,13 +13,14 @@
   - [x] Challenge
   - [x] Accept / reject challenge
   - [ ] Pickpocket ?
+  - [ ] Rankings
 - [ ] Character View
 - [ ] Fight
 
   - [x] Layout
   - [x] Attack
   - [x] Combats
-  - [ ] End with winner
+  - [x] End with winner
   - [ ] Message?
   - [ ] Receive rewards
 

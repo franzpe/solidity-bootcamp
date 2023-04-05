@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import cx from 'classnames';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -14,6 +15,7 @@ const Game = () => {
   const { data: session } = useSession();
   const currUser = session?.user as any;
   const { data } = useQuery(['lobby'], () => axios.get('/game/lobby'));
+  const { data: rankings } = useQuery(['rankings'], () => axios.get('/game/rankings'));
   const [challenger, setChallenger] = useState<{ name: string; level: number; _id: number } | undefined>();
   const [challengingIdx, setChallengingIdx] = useState<number | undefined>();
 
@@ -124,9 +126,10 @@ const Game = () => {
               {data?.data.length > 0 ? (
                 data?.data.map((p: any, idx: number) => (
                   <li key={p._id} className="font-medium space-x-4 flex items-center">
-                    <span>{idx + 1}.</span>
+                    <span className="w-4">{idx + 1}.</span>
                     <span>
-                      <b>{p.player.name}</b> <i>({p.player.address})</i>
+                      <b>{p.player.name}</b>{' '}
+                      <i>({[p.player.address.slice(0, 8), '....', p.player.address.slice(-4)].join('')})</i>
                     </span>
                     <span>
                       <div className="badge badge-accent">level: {p.player.level}</div>
@@ -194,6 +197,37 @@ const Game = () => {
           </div>
         </section>
       )}
+      <section>
+        <div className="card card-compact  bg-base-300 shadow-xl">
+          <div className="card-body space-y-2">
+            <header className="prose">
+              <h2 className="card-title">
+                Rankings <Image src="/rank.png" width={24} height={24} alt="rank" className="m-0" />
+              </h2>
+            </header>
+            <ul className="space-y-2">
+              {rankings?.data.map((p: any, idx: number) => (
+                <li
+                  key={p._id}
+                  className={cx('font-medium space-x-4 flex items-center', {
+                    ['text-amber-500']: idx === 0,
+                    ['text-stone-300']: idx === 1,
+                  })}
+                >
+                  <span className="w-4">{idx + 1}.</span>
+                  <span>
+                    <b>{p.player.name}</b>{' '}
+                    <i>({[p.player.address.slice(0, 8), '....', p.player.address.slice(-4)].join('')})</i>
+                  </span>
+                  <span>
+                    <b>{p.wins}</b>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
