@@ -5,7 +5,40 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
 interface IGameTokens {
+    function balanceOf(address account, uint256 id) external view returns (uint256);
     function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes calldata data) external;
+}
+
+library Verification {
+    function _verifyMsg(bytes32 msg_, bytes memory signature_) internal view returns (address) {
+        (bytes32 r, bytes32 s, uint8 v) = _splitSignature(signature_);
+        bytes32 msgDigest_ = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", msg_));
+
+        return ecrecover(msgDigest_, v, r, s);
+    }
+
+    function _splitSignature(bytes memory sig) public pure returns (bytes32 r, bytes32 s, uint8 v) {
+        require(sig.length == 65, "invalid signature length");
+
+        assembly {
+            /*
+            First 32 bytes stores the length of the signature
+
+            add(sig, 32) = pointer of sig + 32
+            effectively, skips first 32 bytes of signature
+
+            mload(p) loads next 32 bytes starting at the memory address p into memory
+            */
+
+            // first 32 bytes, after the length prefix
+            r := mload(add(sig, 32))
+            // second 32 bytes
+            s := mload(add(sig, 64))
+            // final byte (first byte of the next 32 bytes)
+            v := byte(0, mload(add(sig, 96)))
+        }
+    }
+
 }
 
 /// @title Game.
@@ -14,10 +47,16 @@ contract Game is AccessControl, ERC1155Holder {
     using Counters for Counters.Counter;
     Counters.Counter private _battleId;
     Counters.Counter private _seasonId;
+    uint private _joinBattleCost;
+    address _activeBattleController;
+    Counters.Counter private _numActiveBattles;
+
     bytes32 public constant COST_SETTER_ROLE = keccak256("COST_SETTER_ROLE");
     bytes32 public constant GAME_CONTROLLER_ROLE = keccak256("GAME_CONTROLLER_ROLE");
     bytes32 public constant GAME_TOKENS_ADDR_SETTER_ROLE = keccak256("GAME_TOKENS_ADDR_SETTER_ROLE");
-    uint private _joinBattleCost;
+
+    // nftIdCommittedBytesRegistry[address_of_battle_controller][nftIdCommittedBytes] = true or false (true when already used nftIdCommittedBytes, and false otherwise)
+    mapping(address => mapping(bytes4 => bool)) private nftIdCommittedBytesRegistry;
 
     event NFTReceived(address indexed from_, uint indexed Id_);
     event NFTTransfered(address indexed to_, uint indexed Id_);
@@ -59,7 +98,6 @@ contract Game is AccessControl, ERC1155Holder {
     mapping(uint256 => Battle) _battles;
     mapping(uint256 => Season) _seasons;
 
-    /// Create a new ballot to choose one of `proposalNames`.
     constructor(address gameTokensAddr_) {
         _gameTokensAddress = gameTokensAddr_;
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -115,59 +153,25 @@ contract Game is AccessControl, ERC1155Holder {
         return uint(_battleId.current());
     }
 
-    function addBattle(uint goldAmount_, uint startTime_, uint endTime_, bytes memory nftIdHashdSignature_) public onlyRole(GAME_CONTROLLER_ROLE) onlyCorrectTimeRange(startTime_, endTime_) returns (uint) {
-        // require(verifyHash(nftIdHash_, nftIdHashdSignature_) == msg.sender, "Game: nftIdHash could not be verified");
+    function addBattle(uint goldAmount_, uint startTime_, uint endTime_, bytes memory nftIdHashSignature_) external onlyRole(GAME_CONTROLLER_ROLE) onlyCorrectTimeRange(startTime_, endTime_) {
+        // NOTE 1: it's a responsibility of GAME_CONTROLLER assigning a new battle to make sure nftIdHashSignature_ corresponds to nftId that Game contract possesses
         bytes4 signatureInitBytes;
         assembly {
-            signatureInitBytes := mload(add(nftIdHashdSignature_, 32))
+            signatureInitBytes := mload(add(nftIdHashSignature_, 32))
         }
+
+        // NOTE 2: To make sure nftId is not assigned to another battle, at this point it is only _activeBattleController who can assign Battles
+        require(_activeBattleController == address(0) || _activeBattleController == msg.sender, "Game: new battle can be assigned only if there are no active battles or _activeBattleController==msg.sender");
+        require(nftIdCommittedBytesRegistry[msg.sender][signatureInitBytes] == false, "Game: you have already assigned nftId to another battle");
+
+        _activeBattleController = msg.sender;
+        _numActiveBattles.increment();
+
         Prize memory prize = Prize(goldAmount_, uint(0), signatureInitBytes);
-        uint battleId = _battleId.current();
-        _battles[battleId] = Battle(prize, startTime_, endTime_, [address(0), address(0)], address(0), msg.sender);
+        _battles[_battleId.current()] = Battle(prize, startTime_, endTime_, [address(0), address(0)], address(0), msg.sender);
         _battleId.increment();
 
-        return battleId;
-    }
-
-    function verifyHash(bytes32 hash_, bytes memory signature_) public view onlyRole(GAME_CONTROLLER_ROLE) returns (address) {
-        (bytes32 r, bytes32 s, uint8 v) = splitSignature(signature_);
-        bytes32 messageDigest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash_));
-
-        return ecrecover(messageDigest, v, r, s);
-    }
-
-    function verifyId(uint id_, bytes memory signature_) public view onlyRole(GAME_CONTROLLER_ROLE) returns (address) {
-        return _verifyId(id_, signature_);
-    }
-
-    function _verifyId(uint id_, bytes memory signature_) internal view returns (address) {
-        (bytes32 r, bytes32 s, uint8 v) = splitSignature(signature_);
-        bytes32 hash_ = keccak256(abi.encodePacked(id_));
-        bytes32 messageDigest = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash_));
-
-        return ecrecover(messageDigest, v, r, s);
-    }
-
-    function splitSignature(bytes memory sig) public pure returns (bytes32 r, bytes32 s, uint8 v) {
-        require(sig.length == 65, "invalid signature length");
-
-        assembly {
-            /*
-            First 32 bytes stores the length of the signature
-
-            add(sig, 32) = pointer of sig + 32
-            effectively, skips first 32 bytes of signature
-
-            mload(p) loads next 32 bytes starting at the memory address p into memory
-            */
-
-            // first 32 bytes, after the length prefix
-            r := mload(add(sig, 32))
-            // second 32 bytes
-            s := mload(add(sig, 64))
-            // final byte (first byte of the next 32 bytes)
-            v := byte(0, mload(add(sig, 96)))
-        }
+        nftIdCommittedBytesRegistry[msg.sender][signatureInitBytes] = true;
     }
 
     function getBattle(uint battleId_) public view onlyIfBattleIdExist(battleId_) returns(Battle memory _battle) {
@@ -198,12 +202,9 @@ contract Game is AccessControl, ERC1155Holder {
         return uint(_seasonId.current());
     }
 
-    function addSeason(uint firstBattle_, uint lastBattle_, uint startTime_, uint endTime_) public onlyRole(GAME_CONTROLLER_ROLE) onlyCorrectTimeRange(startTime_, endTime_) returns (uint) {
-        uint seasonId = _seasonId.current();
-        _seasons[seasonId] = Season(firstBattle_, lastBattle_, startTime_, endTime_);
+    function addSeason(uint firstBattle_, uint lastBattle_, uint startTime_, uint endTime_) external onlyRole(GAME_CONTROLLER_ROLE) onlyCorrectTimeRange(startTime_, endTime_) {
+        _seasons[_seasonId.current()] = Season(firstBattle_, lastBattle_, startTime_, endTime_);
         _seasonId.increment();
-
-        return seasonId;
     }
 
     function getSeason(uint seasonId_) public view onlyIfSeasonIdExist(seasonId_) returns(Season memory _season) {
@@ -222,9 +223,45 @@ contract Game is AccessControl, ERC1155Holder {
         return this.onERC1155Received.selector;
     }
 
-    function transferERC1155(address to, uint256 id, uint256 amount, bytes calldata data) internal {
+    function getNumOfNFTsAvailable() public view onlyRole(GAME_CONTROLLER_ROLE) returns (uint) {
+        return uint(_numOfNFTsAvailable.current());
+    }
+
+    function assignWinner(uint battleId_, address winner, uint nftId_, bytes memory signature_) public onlyRole(GAME_CONTROLLER_ROLE) {
+        require(_battles[battleId_].controller == msg.sender, "Game: assigning NFT to a winner can be done only by controller who added the battle");
+        require(winner == _battles[battleId_].players[0] || winner == _battles[battleId_].players[1], "Game: winner must be one of the players assigned for the battle");
+
+        // verify signature is compatible with battle.prize.nftIdCommittedBytes
+        bytes4 signatureInitBytes;
+        assembly {
+            signatureInitBytes := mload(add(signature_, 32))
+        }
+        require(signatureInitBytes == _battles[battleId_].prize.nftIdCommittedBytes, "Game: initial signature bytes are different from committed ones");
+
+        // verify nftId
+        require(Verification._verifyMsg(keccak256(abi.encodePacked(nftId_)), signature_) == msg.sender, "Game: nftId could not be verified against signature");
+
+        // reveal nftId as a prize for the battleId
+        _battles[battleId_].prize.nftIdRevealed = nftId_;
+
+        // verify Gold and nftId balanece of this contract is sufficient
+        require(IGameTokens(_gameTokensAddress).balanceOf(address(this), uint(0)) >= _battles[battleId_].prize.goldAmount, "Game: Game contract does not have sufficient Gold for winner");
+        require(IGameTokens(_gameTokensAddress).balanceOf(address(this), nftId_) == uint(1), "Game: Game contract does not have nftId for winner");
+
+        // transfer Gold to winner
+        _transferERC1155(winner, 0, _battles[battleId_].prize.goldAmount, new bytes(0));
+        // transfer nftId to winner
+        _transferERC1155(winner, nftId_, uint(1), new bytes(0));
+
+        _numActiveBattles.decrement();
+        if (_numActiveBattles.current() < 1) {
+            _activeBattleController = address(0);
+        }
+    }
+
+    function _transferERC1155(address to, uint256 id, uint256 amount, bytes memory data) internal {
         if (id > uint(0)) {
-            require(amount == uint(1), "Game: for id>0, amount received must be equal to 1");
+            require(amount == uint(1), "Game: for id>0, amount must be equal to 1");
             IGameTokens(_gameTokensAddress).safeTransferFrom(address(this), to, id, amount, data);
             _numOfNFTsAvailable.decrement();
             emit NFTTransfered(to, id);
@@ -234,26 +271,14 @@ contract Game is AccessControl, ERC1155Holder {
         }
     }
 
-    function getNumOfNFTsAvailable() public view onlyRole(GAME_CONTROLLER_ROLE) returns (uint) {
-        return uint(_numOfNFTsAvailable.current());
+    // VERIFICATION METHODS (for testing)
+    function verifyMsg(bytes32 msg_, bytes memory signature_) public view onlyRole(GAME_CONTROLLER_ROLE) returns (address) {
+        return Verification._verifyMsg(msg_, signature_);
     }
 
-    function assignNftToWinner(uint battleId_, address winner) public onlyRole(GAME_CONTROLLER_ROLE) {
-        require(_battles[battleId_].controller == msg.sender, "Game: assigning NFT to a winner can be done only by controller who added the battle");
-        require(_checkNotJoined(winner) == false, "Game: winner must be a user");
-        require(winner == _battles[battleId_].players[0] || winner == _battles[battleId_].players[1], "Game: winner must be one of the players assigned for the battle");
-
-
+    function verifyId(uint id_, bytes memory signature_) public view onlyRole(GAME_CONTROLLER_ROLE) returns (address) {
+        return Verification._verifyMsg(keccak256(abi.encodePacked(id_)), signature_);
     }
-
-    // function getRandomNumber() public view returns (uint256 notQuiteRandomNumber) {
-    //     notQuiteRandomNumber = uint256(blockhash(block.number - 1));
-    // }
-
-    // function _getRandomNFTId(uint numberOfNFTsAvailable) public view onlyRole(GAME_CONTROLLER_ROLE) returns (uint) {
-    //     heads = getRandomNumber() % 2 == 0;
-    // }
-    
 
     // The following functions are overrides required by Solidity.
     function supportsInterface(bytes4 interfaceId)
