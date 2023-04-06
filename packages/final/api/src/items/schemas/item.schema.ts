@@ -14,6 +14,9 @@ export class Item {
   description: string;
 
   @Prop()
+  ipfsId: number;
+
+  @Prop()
   imgUri: string;
 
   @Prop()

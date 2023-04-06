@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
-import { Player, PlayerDocument } from 'src/players/schemas/player.schema';
+import { Alchemy, Network } from 'alchemy-sdk';
+import { ethers, Wallet } from 'ethers';
+import { Model } from 'mongoose';
+import { ItemsService } from 'src/items/items.service';
+import { Player } from 'src/players/schemas/player.schema';
+const gameTokensAbi = require('../assets/gameTokensAbi.json');
 import { ChallengeResponse } from './dtos/response-challenge.dto';
 import { GameEventsGateway } from './game-events.gateway';
 import { Battle, BattleDocument } from './schemas/battle.schema';
@@ -9,14 +14,37 @@ import { GameLobby, GameLobbyDocument } from './schemas/lobby.schema';
 
 @Injectable()
 export class GameService {
+  protected provider: ethers.providers.Provider;
+  protected gamesContract: ethers.Contract;
+
   constructor(
     @InjectModel(GameLobby.name)
     private readonly lobbyModel: Model<GameLobbyDocument>,
     @InjectModel(Battle.name)
     private readonly battleModel: Model<BattleDocument>, //
     private readonly gameGtw: GameEventsGateway,
+    private readonly configService: ConfigService,
+    private readonly itemsService: ItemsService,
   ) {
-    console.log(gameGtw);
+    const alchemy = new Alchemy({
+      apiKey: this.configService.get<string>('ALCHEMY_API_KEY') || '',
+      network: Network.ETH_SEPOLIA,
+    });
+
+    alchemy.config.getProvider().then((provider) => {
+      this.provider = provider;
+
+      const signer = new Wallet(
+        this.configService.get<string>('GAME_MANAGER_PRIVATE_KEY'),
+        this.provider,
+      );
+
+      this.gamesContract = new ethers.Contract(
+        this.configService.get<string>('GAME_TOKENS_CONTRACT_ADDRESS'),
+        gameTokensAbi.abi,
+        signer,
+      );
+    });
   }
 
   async joinLobby(id: string): Promise<string> {
@@ -87,5 +115,25 @@ export class GameService {
         status: 'finished',
       })
       .populate('winner');
+  }
+
+  async calculateReward(id: string, winnerId: string) {
+    const battle = await this.findBattle(id);
+
+    if ((battle.winner as any)._id !== winnerId) {
+      throw new Error('Not the winner');
+    }
+
+    const random = Math.round(Math.random() * 3) + 1;
+
+    const item = await this.itemsService.findOneByIpfsId(random);
+
+    return item;
+  }
+
+  async mintNft(address: string, nftId: number) {
+    const mintTx = await this.gamesContract.mint(address, nftId, 1, '0x');
+    const tx = await mintTx.wait();
+    return tx.transactionHash;
   }
 }

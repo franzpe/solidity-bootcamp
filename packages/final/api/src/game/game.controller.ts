@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { MintBodyDto } from './dtos/mint-body.dto';
 import { ChallengeResponse } from './dtos/response-challenge.dto';
 import { GameService } from './game.service';
 
@@ -39,5 +48,18 @@ export class GameController {
   @Post('/battle/:id')
   async setWinner(@Param('id') id: string, @Body() body: { winner: string }) {
     return this.gameService.setWinner(id, body.winner);
+  }
+
+  @Get('/battle/:id/reward')
+  async getReward(
+    @Param('id') id: string,
+    @Query() query: { winnerId: string },
+  ) {
+    return this.gameService.calculateReward(id, query.winnerId);
+  }
+
+  @Post('/battle/:id/reward-mint')
+  async mintReward(@Body() body: MintBodyDto) {
+    return this.gameService.mintNft(body.address, body.nftId);
   }
 }

@@ -24,6 +24,10 @@ export class ItemsService {
     return this.itemModel.findOne({ _id: id }).exec();
   }
 
+  async findOneByIpfsId(ipfsId: number): Promise<Item> {
+    return this.itemModel.findOne({ ipfsId: ipfsId }).exec();
+  }
+
   async delete(id: string) {
     const deleteItem = await this.itemModel
       .findByIdAndDelete({ _id: id })

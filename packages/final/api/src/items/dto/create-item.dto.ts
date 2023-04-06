@@ -9,6 +9,9 @@ export class CreateItemDto {
   description: string;
 
   @ApiProperty()
+  ipfsId: number;
+
+  @ApiProperty()
   imgUri: string;
 
   @ApiProperty()

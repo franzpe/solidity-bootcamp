@@ -4,7 +4,7 @@
 
 - [x] App project scaffolded by create-web3-dapp
 - [x] Create player & authentication
-- [ ] Validate jwt token from next-auth in nest application
+- [ ] Validate jwt token from nehttps://ipfs.io/ipfs/bafkreiekrj6hvqnm4raaurxejulp4u2p3qp27bre3lgbazexgeotssmkzmxt-auth in nest application
 - [x] Pull player info on Login
 - [ ] Lobby
   - [x] Join
@@ -23,6 +23,11 @@
   - [x] End with winner
   - [ ] Message?
   - [ ] Receive rewards
+
+  - [ ] REWARD
+    - [x] add ids match ipfs on items
+    - [ ] Init contract on backend
+    - [ ] Randomize and nft
 
 - FE nextjs (typescript) - rainbowkit, wagmi
   - Authentication - next-auth, wagmi, siwe, @rainbow-me/rainbowkit-siwe-next-auth
