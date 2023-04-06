@@ -24,11 +24,10 @@ export default function Header() {
           </Link>
         </h2>
       </div>
-      <button>mint</button>
       <div className="flex items-center">
         <div className="mr-6 transition hover:scale-110">
           <Image src="/gold.png" width={24} height={24} alt="gold" className="max-h-6 inline-block mr-2" />
-          <span className="font-bold">{ethers.utils.formatUnits(data as any, 'wei')}</span>
+          <span className="font-bold">{ethers.utils.formatUnits((data as any) || '0', 'wei')}</span>
         </div>
         <div className="mr-6 relative transition hover:scale-110">
           <Image

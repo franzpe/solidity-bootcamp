@@ -60,6 +60,7 @@ export class GameController {
 
   @Post('/battle/:id/reward-mint')
   async mintReward(@Body() body: MintBodyDto) {
+    console.log(body);
     return this.gameService.mintNft(body.address, body.nftId);
   }
 }

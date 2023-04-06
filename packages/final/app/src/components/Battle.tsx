@@ -28,10 +28,13 @@ const Battle = ({ id }: Props) => {
   const [turnId, setTurnId] = useState<string | undefined>();
   const [turns, setTurns] = useState<TurnInfo[]>([]);
   const router = useRouter();
+  const [claimedTxHash, setClaimedTxHash] = useState('');
   const [hp, setHp] = useState<Record<string, { hp: number; dmg: number }>>();
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const currUser = session?.user as any;
+  const [loaders, setLoaders] = useState({ isCollecting: false, isClaiming: false, hasClaimed: false });
+  const [rewardItem, setRewardItem] = useState<any>();
 
   const endBattle = useMutation((winner: string) => axios.post('/game/battle/' + id, { winner }), {
     onSuccess: ({ data }) => {
@@ -98,11 +101,41 @@ const Battle = ({ id }: Props) => {
   };
 
   const isFinished = data?.data.status === 'finished';
-  const isWinner = currUser._id === data?.data.winner?._id;
+  const isWinner = currUser?._id === data?.data.winner?._id;
 
-  const handleCollectReward = (e: any) => {
-    router.push('/');
+  const handleCollectReward = async (e: any) => {
+    if (rewardItem) {
+      router.push('/');
+      return;
+    }
+
+    setLoaders(prev => ({ ...prev, isCollecting: true }));
+    const { data: item } = await axios.get(`/game/battle/${id}/reward`, { params: { winnerId: currUser._id } });
+    const { data: ipfsItem } = await axios.get(
+      `https://ipfs.io/ipfs/bafybeibtavm74qrswfrdzbvsftdofdsfwulycnmyp5q62jso7twt73o6ju/${item.ipfsId}.json`,
+      { params: { winnerId: currUser._id } },
+    );
+    setLoaders(prev => ({ ...prev, isCollecting: false }));
+
+    setRewardItem({ id: item.ipfsId, ...ipfsItem });
   };
+
+  async function handleClaim() {
+    try {
+      setLoaders(prev => ({ ...prev, isClaiming: true }));
+
+      const { data: transactionHash } = await axios.post(`/game/battle/${id}/reward-mint`, {
+        address: currUser?.address,
+        nftId: rewardItem.id,
+      });
+
+      setClaimedTxHash(transactionHash);
+
+      setLoaders(prev => ({ ...prev, isClaiming: false, hasClaimed: true }));
+    } catch (err) {
+      setLoaders(prev => ({ ...prev, isClaiming: false, hasClaimed: false }));
+    }
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-full space-y-8">
@@ -240,11 +273,61 @@ const Battle = ({ id }: Props) => {
           </div>
         </div>
       </div>
+      {rewardItem && (
+        <div className="card card-compact bg-base-300 shadow shadow-orange-400">
+          <div className="card-body flex flex-col">
+            <div className="flex flex-row items-center space-x-4">
+              <img
+                src={rewardItem.image}
+                alt="reward"
+                width="40"
+                height="40"
+                className="rounded-lg border border-gray-700"
+              />
+              <div className="flex flex-col">
+                <span>
+                  <b className="text-lg">{rewardItem.name}</b>
+                  <span className="badge badge-info ml-2">level: {rewardItem.level}</span>
+                </span>
+                <span>
+                  Slot: <b>{rewardItem.slot}</b>
+                </span>
+              </div>
+              <button
+                className="btn btn-outline btn-success disabled:text-emerald-700"
+                disabled={loaders.isClaiming || loaders.hasClaimed}
+                onClick={handleClaim}
+              >
+                {loaders.hasClaimed ? 'ENJOOY!' : loaders.isClaiming ? 'zzz..' : 'Claim'}
+              </button>
+            </div>
+            <div>
+              <span className="italic">"{rewardItem.description}"</span>
+              <div className="italic space-x-4">
+                {rewardItem.slot === 'weapon' ? (
+                  <span>Damage: {rewardItem.damage}</span>
+                ) : (
+                  <span>Armor: {rewardItem.armor}</span>
+                )}
+                <span>Strength: {rewardItem.strength}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {claimedTxHash && (
+        <p>
+          <i className="text-sm">
+            Transaction hash: <b>{claimedTxHash}</b>
+          </i>
+        </p>
+      )}
+
       {isFinished && (
         <div className="text-center">
           {isWinner ? (
-            <button className="btn btn-xl" onClick={handleCollectReward}>
-              Collect reward and exit
+            <button className="btn btn-xl" onClick={handleCollectReward} disabled={loaders.isCollecting}>
+              {!rewardItem ? 'Collect reward' : 'Exit'}
             </button>
           ) : (
             <Link className="btn btn-xl" href="/">

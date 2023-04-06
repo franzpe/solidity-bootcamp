@@ -159,12 +159,14 @@ const Game = () => {
               )}
             </ul>
             <div className="mt-8 card-actions">
-              <button
-                className="btn btn-sm btn-outline btn-success"
-                onClick={() => joinLobbyMutation.mutate(currUser._id)}
-              >
-                Join lobby
-              </button>
+              {!isInLobby && (
+                <button
+                  className="btn btn-sm btn-outline btn-success"
+                  onClick={() => joinLobbyMutation.mutate(currUser._id)}
+                >
+                  Join lobby
+                </button>
+              )}
               {isInLobby && (
                 <button
                   className="btn btn-sm btn-outline btn-error"

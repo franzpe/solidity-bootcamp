@@ -122,7 +122,7 @@ export class GameService {
   async calculateReward(id: string, winnerId: string) {
     const battle = await this.findBattle(id);
 
-    if ((battle.winner as any)._id !== winnerId) {
+    if ((battle.winner as any)._id.toString() !== winnerId) {
       throw new Error('Not the winner');
     }
 

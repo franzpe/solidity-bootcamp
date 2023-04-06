@@ -26,8 +26,11 @@
 
   - [ ] REWARD
     - [x] add ids match ipfs on items
-    - [ ] Init contract on backend
-    - [ ] Randomize and nft
+    - [x] Init contract on backend
+    - [x] Randomize and nft
+    - [ ] FE - Show awarded nft
+    - [ ] FE - Claim awarded nft
+    - [ ] FE - Dashboard show all nft items
 
 - FE nextjs (typescript) - rainbowkit, wagmi
   - Authentication - next-auth, wagmi, siwe, @rainbow-me/rainbowkit-siwe-next-auth
