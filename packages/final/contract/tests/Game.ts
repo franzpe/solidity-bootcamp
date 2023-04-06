@@ -99,7 +99,7 @@ describe("Test Game and GameToken contracts", function () {
         gameProxyContract = await gameProxyContractFactory.deploy(gameContract.address, proxiesAdmin.address, gInitData);
         gameContractUsingProxy = await ethers.getContractAt("Game", gameProxyContract.address);
 
-        // Game Upgrad Test contract deployment
+        // Game Upgrade Test contract deployment
         const gameUpgradeTestContractFactory = await ethers.getContractFactory("GameUpgradeTest");
         gameUpgradeTestContract = await gameUpgradeTestContractFactory.deploy();
         await gameUpgradeTestContract.deployTransaction.wait(); // instead of using .deployed(), also helps to get tx data
