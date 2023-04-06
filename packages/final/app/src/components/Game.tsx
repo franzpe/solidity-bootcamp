@@ -7,6 +7,62 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import io from 'socket.io-client';
 
+type Props = {
+  id: number;
+  count: number;
+};
+
+const Item = ({ id, count }: Props) => {
+  const { data, isSuccess } = useQuery(['lobby', id], () =>
+    axios.get(`https://ipfs.io/ipfs/bafybeibtavm74qrswfrdzbvsftdofdsfwulycnmyp5q62jso7twt73o6ju/${id}.json`),
+  );
+
+  if (!isSuccess) return null;
+
+  return (
+    <div className="card card-compact bg-base-300 shadow shadow-orange-400">
+      <div className="card-body flex flex-col">
+        <div className="flex flex-row items-center space-x-4">
+          <div className="indicator">
+            <img
+              src={data!.data.image}
+              alt="reward"
+              width="40"
+              height="40"
+              className="rounded-lg border border-gray-700"
+            />
+            {count > 1 && (
+              <span className="indicator-item badge badge-warning badge-sm">
+                <b>{count}</b>
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col">
+            <span>
+              <b className="text-lg">{data!.data.name}</b>
+              <span className="badge badge-info ml-2">level: {data!.data.level}</span>
+            </span>
+            <span>
+              Slot: <b>{data.data.slot}</b>
+            </span>
+          </div>
+        </div>
+        <div>
+          <span className="italic">"{data.data.description}"</span>
+          <div className="italic space-x-4">
+            {data.data.slot === 'weapon' ? (
+              <span>Damage: {data.data.damage}</span>
+            ) : (
+              <span>Armor: {data.data.armor}</span>
+            )}
+            <span>Strength: {data.data.strength}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const socket = io('http://localhost:3001');
 
 const Game = () => {
@@ -18,6 +74,27 @@ const Game = () => {
   const { data: rankings } = useQuery(['rankings'], () => axios.get('/game/rankings'));
   const [challenger, setChallenger] = useState<{ name: string; level: number; _id: number } | undefined>();
   const [challengingIdx, setChallengingIdx] = useState<number | undefined>();
+
+  const { data: itemsIds } = useQuery(['Items'], async () => {
+    const { data: items } = await axios.get(`/players/${currUser?._id}/items`);
+
+    const idsWithCount: { id: number; count: number }[] = [];
+
+    items.forEach((item: any) => {
+      const idx = idsWithCount.findIndex(i => i.id === item.ipfsId);
+
+      if (idx > -1) {
+        idsWithCount[idx] = { ...idsWithCount[idx], count: idsWithCount[idx].count + 1 };
+      } else {
+        idsWithCount.push({ id: item.ipfsId, count: 1 });
+      }
+    });
+
+    console.log(idsWithCount);
+
+    return idsWithCount;
+    // return Array.from(new Set(items.map((i: any) => i.ipfsId)));
+  });
 
   const joinLobbyMutation = useMutation({
     mutationFn: (id: string) => {
@@ -228,6 +305,27 @@ const Game = () => {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="card card-compact  bg-base-300 shadow-xl">
+          <div className="card-body space-y-2">
+            <header className="prose">
+              <h2 className="card-title">
+                Inventory <span className="text-sm italic">(NFT'S)</span>
+              </h2>
+            </header>
+            {itemsIds && itemsIds.length > 0 ? (
+              <div className="space-y-4">
+                {itemsIds?.map(i => (
+                  <Item key={i.id} id={i.id} count={i.count} />
+                ))}
+              </div>
+            ) : (
+              <div>You have no items yet. Fight for your live and get some! </div>
+            )}
           </div>
         </div>
       </section>

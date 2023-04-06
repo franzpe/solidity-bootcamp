@@ -63,4 +63,10 @@ export class PlayersService {
       },
     );
   }
+
+  async findPlayerItems(id: string) {
+    const player = await this.playerModel.findById(id).populate('items');
+
+    return player.items;
+  }
 }

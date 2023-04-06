@@ -42,4 +42,9 @@ export class PlayersController {
   async delete(@Param('id') id: string) {
     return this.playerService.delete(id);
   }
+
+  @Get('/:id/items')
+  async playerItems(@Param('id') id: string) {
+    return this.playerService.findPlayerItems(id);
+  }
 }

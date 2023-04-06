@@ -242,6 +242,7 @@ const Battle = ({ id }: Props) => {
                 >
                   <img
                     src={s.imageUri}
+                    id
                     alt="attack"
                     className={cx('rounded-lg', {
                       ['filter grayscale']: currUser?._id !== data?.data.player2._id || isFinished,
