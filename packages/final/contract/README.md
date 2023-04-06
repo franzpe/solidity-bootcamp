@@ -4,6 +4,7 @@ The following is the list of implemented smart contracts:
 - Game.sol: stores and controls users, battles, and seasons as well as ensures winner receives prize that is secretely specified during creation of a battle
 - GameTokens.sol: ERC1155 openzeppelin contract for "Gold" (ERC20-like) and "NFT" (ERC721-like) tokens
 - GameProxy.sol: a proxy contract that allows upgradeability of implementation/logic contracts (Game.sol and GameTokens.sol, which requires the contracts to be initializable and inheritting Upgradeable openzeppeling contracts)
+- GameUpgradeTest.sol: is an instance of *Game* contract that has implements new state variable and functions and used for testing Upgradeability by changing *implementation/logic* address within *GameProxy* from *Game.sol* to *GameUpgradeTest* instance
 
 # Contracts
 ## Game contract description
