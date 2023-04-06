@@ -72,10 +72,7 @@ contract Game is AccessControlUpgradeable, ERC1155HolderUpgradeable {
 
     // User struct to be used for users mapping
     struct User {
-        // string nick;
         uint256 joinedTime;
-        // uint256[] battles_pariticipated; // dynamic size, might wanna limit it for better storage management
-        // uint256[] battles_won; // dynamic size, might wanna limit it for better storage management
     }
 
     // Prize struct to be used for Battle struct prize field
