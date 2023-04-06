@@ -52,4 +52,15 @@ export class PlayersService {
 
     return !!player;
   }
+
+  async addItem(id: string, itemId: string) {
+    const player = await this.playerModel.findById(id);
+
+    return await this.playerModel.findOneAndUpdate(
+      { _id: id },
+      {
+        items: [...player.items, itemId],
+      },
+    );
+  }
 }

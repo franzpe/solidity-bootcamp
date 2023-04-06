@@ -5,6 +5,7 @@ import { Alchemy, Network } from 'alchemy-sdk';
 import { ethers, Wallet } from 'ethers';
 import { Model } from 'mongoose';
 import { ItemsService } from 'src/items/items.service';
+import { PlayersService } from 'src/players/players.service';
 import { Player } from 'src/players/schemas/player.schema';
 const gameTokensAbi = require('../assets/gameTokensAbi.json');
 import { ChallengeResponse } from './dtos/response-challenge.dto';
@@ -25,6 +26,7 @@ export class GameService {
     private readonly gameGtw: GameEventsGateway,
     private readonly configService: ConfigService,
     private readonly itemsService: ItemsService,
+    private readonly playerService: PlayersService,
   ) {
     const alchemy = new Alchemy({
       apiKey: this.configService.get<string>('ALCHEMY_API_KEY') || '',
@@ -134,6 +136,14 @@ export class GameService {
   async mintNft(address: string, nftId: number) {
     const mintTx = await this.gamesContract.mint(address, nftId, 1, '0x');
     const tx = await mintTx.wait();
+
+    const [player, item] = await Promise.all([
+      this.playerService.findOne(address),
+      this.itemsService.findOneByIpfsId(nftId),
+    ]);
+
+    await this.playerService.addItem((player as any)._id, (item as any)._id);
+
     return tx.transactionHash;
   }
 }
