@@ -1,29 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-contract GameTokens is ERC1155, AccessControl {
+/// @title GameTokens.
+contract GameTokens is ERC1155Upgradeable, AccessControlUpgradeable {
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     uint256 public constant GOLD = 0; // NOTE: all other IDs are for NFTs - do not change this as on Game contract's onERC1155Received function emits an NFTReceived event for Ids>0
     uint256 public _maxNftId;
 
-    constructor(uint maxNftId_, string memory uri_) ERC1155("") {
+    function initialize(uint maxNftId_, string memory uri_) public initializer {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(URI_SETTER_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
 
+        ERC1155Upgradeable.__ERC1155_init(uri_);
         _setMaxNftId(maxNftId_);
-        _setURI(uri_);
 
         _mint(msg.sender, GOLD, 10**18, "");
-    }
-
-    function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
-        _setURI(newuri);
     }
 
     function setMaxNftId(uint maxNftId_) public onlyRole(URI_SETTER_ROLE) {
@@ -63,7 +60,7 @@ contract GameTokens is ERC1155, AccessControl {
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC1155, AccessControl)
+        override(ERC1155Upgradeable, AccessControlUpgradeable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

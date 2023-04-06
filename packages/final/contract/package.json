@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.2",
+    "@openzeppelin/contracts-upgradeable": "^4.8.2",
     "@types/mime": "^3.0.1",
     "@types/mime-types": "^2.1.1",
     "blob": "^0.1.0",

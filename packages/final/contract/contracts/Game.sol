@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.0;
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 
 interface IGameTokens {
     function balanceOf(address account, uint256 id) external view returns (uint256);
@@ -42,29 +42,35 @@ library Verification {
 }
 
 /// @title Game.
-contract Game is AccessControl, ERC1155Holder {
-    address public _gameTokensAddress;
-    using Counters for Counters.Counter;
-    Counters.Counter private _battleId;
-    Counters.Counter private _seasonId;
-    uint private _joinBattleCost;
-    address _activeBattleController;
-    Counters.Counter private _numActiveBattles;
+contract Game is AccessControlUpgradeable, ERC1155HolderUpgradeable {
+    using CountersUpgradeable for CountersUpgradeable.Counter;
 
+    // AccessControl Roles
     bytes32 public constant COST_SETTER_ROLE = keccak256("COST_SETTER_ROLE");
     bytes32 public constant GAME_CONTROLLER_ROLE = keccak256("GAME_CONTROLLER_ROLE");
     bytes32 public constant GAME_TOKENS_ADDR_SETTER_ROLE = keccak256("GAME_TOKENS_ADDR_SETTER_ROLE");
 
-    // nftIdCommittedBytesRegistry[address_of_battle_controller][nftIdCommittedBytes] = true or false (true when already used nftIdCommittedBytes, and false otherwise)
+    // addres of GameTokens contract used for Gold (ERC20-like) and NFTs (ERC721-like)
+    address public _gameTokensAddress;
+
+    // battle cost required to be included in a transaction by a user willing to join a battle
+    uint private _joinBattleCost;
+
+    // tracks battleId that can be used to add a battle
+    CountersUpgradeable.Counter private _battleId;
+    // tracks seasonId that can be used to add a season
+    CountersUpgradeable.Counter private _seasonId;
+    // address of active battle controller, only a single battler controller is allowed at a time, = address(0) when no battler controller is active thus allowing new battle controller
+    address _activeBattleController;
+    // tracks number of active battles
+    CountersUpgradeable.Counter private _numActiveBattles;
+    // tracks number of available NFTs
+    CountersUpgradeable.Counter private _numOfNFTsAvailable;
+
+    // to prevent committed nftId collisions when GAME_CONTROLLER adds a new battle
     mapping(address => mapping(bytes4 => bool)) private nftIdCommittedBytesRegistry;
 
-    event NFTReceived(address indexed from_, uint indexed Id_);
-    event NFTTransfered(address indexed to_, uint indexed Id_);
-    Counters.Counter private _numOfNFTsAvailable;
-
-    event GoldReceived(address indexed from_, uint indexed amount_);
-    event GoldTransfered(address indexed to_, uint indexed amount_);
-
+    // User struct to be used for users mapping
     struct User {
         // string nick;
         uint256 joinedTime;
@@ -72,12 +78,14 @@ contract Game is AccessControl, ERC1155Holder {
         // uint256[] battles_won; // dynamic size, might wanna limit it for better storage management
     }
 
+    // Prize struct to be used for Battle struct prize field
     struct Prize {
         uint256 goldAmount;
         uint256 nftIdRevealed;
         bytes4 nftIdCommittedBytes; // committed of controller's signature of message(keccak256(nftIdBytes)) where nftId is to be revealed and 
     }
 
+    // Battle struct to be used for battles mapping
     struct Battle {
         Prize prize;
         uint256 startTime;  // UTC format timestamp
@@ -87,6 +95,7 @@ contract Game is AccessControl, ERC1155Holder {
         address controller; // battle controller (commits NftId, and reveals upon assigning NFT to a winner)
     }
 
+    // Season struct to be used for seasons mapping
     struct Season {
         uint256 firstBattle;    // first Battle of a season
         uint256 lastBattle;     // last Battle of a season
@@ -94,11 +103,22 @@ contract Game is AccessControl, ERC1155Holder {
         uint256 endTime;        // UTC format timestamp
     }
 
+    // users data
     mapping(address => User) public users;
+    // battles data
     mapping(uint256 => Battle) _battles;
+    // seasons data
     mapping(uint256 => Season) _seasons;
 
-    constructor(address gameTokensAddr_) {
+    // Events for NFTs
+    event NFTReceived(address indexed from_, uint indexed Id_);
+    event NFTTransfered(address indexed to_, uint indexed Id_);
+
+    // Events for Gold
+    event GoldReceived(address indexed from_, uint indexed amount_);
+    event GoldTransfered(address indexed to_, uint indexed amount_);
+
+    function initialize(address gameTokensAddr_) public initializer {
         _gameTokensAddress = gameTokensAddr_;
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(COST_SETTER_ROLE, msg.sender);
@@ -212,7 +232,7 @@ contract Game is AccessControl, ERC1155Holder {
     }
 
     // NFTs
-    function onERC1155Received(address operator, address from, uint256 id, uint256 amount, bytes memory data) public override(ERC1155Holder) returns (bytes4) {
+    function onERC1155Received(address operator, address from, uint256 id, uint256 amount, bytes memory data) public override(ERC1155HolderUpgradeable) returns (bytes4) {
         if (id > uint(0)) {
             require(amount == uint(1), "Game: for id>0, amount received must be equal to 1");
             _numOfNFTsAvailable.increment();
@@ -284,7 +304,7 @@ contract Game is AccessControl, ERC1155Holder {
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC1155Receiver, AccessControl)
+        override(ERC1155ReceiverUpgradeable, AccessControlUpgradeable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
